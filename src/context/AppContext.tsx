@@ -90,33 +90,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Desktop sidebar collapse state
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
-    const saved = localStorage.getItem('KinetiQ_sidebar_collapsed');
+    const saved = localStorage.getItem('kinetix_sidebar_collapsed');
     return saved ? JSON.parse(saved) : false;
   });
 
   const toggleSidebarCollapse = () => {
     setIsSidebarCollapsed((prev) => {
       const next = !prev;
-      localStorage.setItem('KinetiQ_sidebar_collapsed', JSON.stringify(next));
+      localStorage.setItem('kinetix_sidebar_collapsed', JSON.stringify(next));
       return next;
     });
   };
 
   // Theme: light / dark
   const [theme, setTheme] = useState<ThemeMode>(() => {
-    const saved = localStorage.getItem('KinetiQ_theme');
+    const saved = localStorage.getItem('kinetix_theme');
     return (saved as ThemeMode) || 'light';
   });
 
   // User Profile
   const [user, setUser] = useState<UserProfile>(() => {
-    const saved = localStorage.getItem('KinetiQ_user');
+    const saved = localStorage.getItem('kinetix_user');
     return saved ? JSON.parse(saved) : INITIAL_USER;
   });
 
   // Passes
   const [passes, setPasses] = useState<RegistrationPass[]>(() => {
-    const saved = localStorage.getItem('KinetiQ_passes');
+    const saved = localStorage.getItem('kinetix_passes');
     return saved ? JSON.parse(saved) : INITIAL_PASSES;
   });
 
@@ -151,7 +151,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem('KinetiQ_theme', theme);
+    localStorage.setItem('kinetix_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
@@ -165,11 +165,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   useEffect(() => {
-    localStorage.setItem('KinetiQ_user', JSON.stringify(user));
+    localStorage.setItem('kinetix_user', JSON.stringify(user));
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem('KinetiQ_passes', JSON.stringify(passes));
+    localStorage.setItem('kinetix_passes', JSON.stringify(passes));
   }, [passes]);
 
   const updateUser = (updated: Partial<UserProfile>) => {
