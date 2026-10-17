@@ -39,9 +39,12 @@ interface AppContextType {
   requestUserLocation: () => void;
   isLocating: boolean;
   
-  // Mobile UI
+  // Mobile UI & Sidebar Collapse
   isMobileSidebarOpen: boolean;
   setIsMobileSidebarOpen: (open: boolean) => void;
+  isSidebarCollapsed: boolean;
+  setIsSidebarCollapsed: (collapsed: boolean) => void;
+  toggleSidebarCollapse: () => void;
   
   // Sports State
   events: SportsEvent[];
@@ -84,6 +87,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Mobile sidebar state
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // Desktop sidebar collapse state
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    const saved = localStorage.getItem('kinetix_sidebar_collapsed');
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  const toggleSidebarCollapse = () => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem('kinetix_sidebar_collapsed', JSON.stringify(next));
+      return next;
+    });
+  };
 
   // Theme: light / dark
   const [theme, setTheme] = useState<ThemeMode>(() => {
@@ -330,6 +347,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isLocating,
         isMobileSidebarOpen,
         setIsMobileSidebarOpen,
+        isSidebarCollapsed,
+        setIsSidebarCollapsed,
+        toggleSidebarCollapse,
         events,
         turfs,
         ghostSubs,
