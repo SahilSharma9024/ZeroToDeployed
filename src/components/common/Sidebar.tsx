@@ -21,6 +21,8 @@ import {
   CalendarCheck,
   PanelLeftClose,
   PanelLeftOpen,
+  Gamepad2,
+  Sparkles,
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
@@ -60,6 +62,7 @@ export const Sidebar: React.FC = () => {
 
   const sportsNav = [
     { id: 'sports-overview' as ActivePage, label: 'Sports Overview', icon: Compass },
+    { id: 'virtual-gym' as ActivePage, label: 'Virtual Gym (Avatar RPG)', icon: Gamepad2, badge: '🎮 Avatar RPG', badgeColor: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-sm' },
     { id: 'sports-events' as ActivePage, label: 'Tournaments & Events', icon: Trophy, badge: '6 Live' },
     { id: 'sports-turfs' as ActivePage, label: 'Turfs & Arenas', icon: MapPin },
     { id: 'sports-map' as ActivePage, label: 'Interactive Venue Map', icon: Map, highlight: true },
@@ -69,6 +72,7 @@ export const Sidebar: React.FC = () => {
 
   const fitnessNav = [
     { id: 'fitness-overview' as ActivePage, label: 'Fitness Overview', icon: Compass },
+    { id: 'virtual-gym' as ActivePage, label: 'Virtual Gym (Avatar RPG)', icon: Gamepad2, badge: '🎮 3D Avatar', badgeColor: 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-sm' },
     { id: 'fitness-gyms' as ActivePage, label: 'High-Rated Gyms', icon: Dumbbell, badge: 'Top Rated' },
     { id: 'fitness-map' as ActivePage, label: 'Interactive Gym Map', icon: Map, highlight: true },
     { id: 'fitness-calculators' as ActivePage, label: 'BMI & BMR Suite', icon: Calculator },
