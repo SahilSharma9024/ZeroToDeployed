@@ -123,10 +123,10 @@ export const ProfileModal: React.FC = () => {
             />
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                Universal Athlete & Fitness ID
+                Personal Details & Athlete ID
               </h2>
               <p className="text-xs text-slate-600 dark:text-slate-400">
-                Single unified identity for instant 1-click sports & gym registrations
+                Update your biometrics, units (kg/lbs, cm/in), contact info & registration credentials
               </p>
             </div>
           </div>

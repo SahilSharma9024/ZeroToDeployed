@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-const STORAGE_KEY = 'kinetix_virtual_gym_stats_v1';
+const STORAGE_KEY = 'KinetiQ_virtual_gym_stats_v1';
 
 const INITIAL_CUSTOMIZATION: AvatarCustomization = {
   archetype: 'titan',

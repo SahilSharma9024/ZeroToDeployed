@@ -75,13 +75,13 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#EDF2F7] dark:bg-[#0A0E17] text-slate-900 dark:text-slate-100 flex transition-colors duration-200">
+    <div className="h-screen bg-[#EDF2F7] dark:bg-[#0A0E17] text-slate-900 dark:text-slate-100 flex overflow-hidden transition-colors duration-200">
       
       {/* Persistent Left Sidebar Panel */}
       <Sidebar />
 
-      {/* Main Right Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* Main Right Content Area (Only this scrolls) */}
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
         
         {/* Top Navbar */}
         <Navbar />
