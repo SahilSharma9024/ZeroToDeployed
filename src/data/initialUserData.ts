@@ -1,0 +1,62 @@
+import { UserProfile, RegistrationPass } from '../types';
+
+export const INITIAL_USER: UserProfile = {
+  id: 'usr_007',
+  name: 'Aarav Sharma',
+  email: 'aarav.sharma@kinetix.io',
+  phoneCountryCode: '+91',
+  phone: '98765 43210',
+  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250',
+  role: 'athlete',
+  age: 23,
+  gender: 'Male',
+  unitSystem: 'metric',
+  heightCm: 178,
+  weightKg: 73.5,
+  fitnessGoal: 'muscle_gain',
+  experienceLevel: 'Intermediate',
+  primarySports: ['Football', 'Badminton', 'Tennis'],
+  jerseySize: 'L',
+  emergencyContact: {
+    name: 'Vikram Sharma (Father)',
+    phone: '+91 98111 22334',
+    relation: 'Father',
+  },
+  medicalClearance: true,
+  bloodGroup: 'B+',
+  city: 'Bangalore / Koramangala',
+  turfElo: 1420,
+  streakDays: 7,
+  lastCheckInDate: '2026-10-17',
+};
+
+export const INITIAL_PASSES: RegistrationPass[] = [
+  {
+    id: 'pass_101',
+    type: 'event',
+    title: 'Bangalore Monsoon Box Cricket Cup',
+    category: 'Cricket • Outdoor',
+    date: '2026-10-24',
+    time: '08:00 AM - 02:00 PM',
+    venue: 'PlayMania Turf, Indiranagar',
+    registeredAt: '2026-10-15',
+    ticketCode: 'KNX-CRIC-9921',
+    athleteName: 'Aarav Sharma',
+    status: 'Confirmed',
+    cost: '₹499 (Team Pass)',
+  },
+  {
+    id: 'pass_102',
+    type: 'gym_pass',
+    title: 'Cult.Fit Elite - 3 Day All-Access Trial',
+    category: 'Fitness • Gym Pass',
+    date: 'Valid till 2026-10-30',
+    time: 'All Day (06:00 AM - 10:00 PM)',
+    venue: 'Cult.Fit Koramangala 5th Block',
+    registeredAt: '2026-10-16',
+    ticketCode: 'KNX-GYM-4412',
+    athleteName: 'Aarav Sharma',
+    status: 'Active',
+    cost: 'FREE Trial',
+  }
+];
