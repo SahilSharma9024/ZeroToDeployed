@@ -75,7 +75,7 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex transition-colors duration-200">
+    <div className="min-h-screen bg-[#EDF2F7] dark:bg-[#0A0E17] text-slate-900 dark:text-slate-100 flex transition-colors duration-200">
       
       {/* Persistent Left Sidebar Panel */}
       <Sidebar />
