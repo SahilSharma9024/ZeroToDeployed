@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Trophy, Dumbbell, Ticket, Menu, Sun, Moon, Flame } from 'lucide-react';
+import { Trophy, Dumbbell, Ticket, Menu, Sun, Moon, Flame, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const {
@@ -13,7 +13,9 @@ export const Navbar: React.FC = () => {
     setIsProfileOpen,
     theme,
     toggleTheme,
-    setIsMobileSidebarOpen
+    setIsMobileSidebarOpen,
+    isSidebarCollapsed,
+    toggleSidebarCollapse,
   } = useApp();
 
   return (
@@ -21,14 +23,25 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           
-          {/* Left: Mobile Menu Button & Brand Logo */}
+          {/* Left: Mobile Menu Button & Brand Logo & Desktop Collapse Toggle */}
           <div className="flex items-center gap-3">
+            {/* Mobile menu trigger */}
             <button
               onClick={() => setIsMobileSidebarOpen(true)}
               className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 lg:hidden"
               aria-label="Open sidebar"
             >
               <Menu className="w-5 h-5" />
+            </button>
+
+            {/* Desktop collapse toggle */}
+            <button
+              onClick={toggleSidebarCollapse}
+              className="hidden lg:flex p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              title={isSidebarCollapsed ? "Expand sidebar (Ctrl+B)" : "Collapse sidebar (Ctrl+B)"}
+              aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {isSidebarCollapsed ? <PanelLeftOpen className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
             </button>
 
             {/* Clickable Brand Logo to return Home */}
