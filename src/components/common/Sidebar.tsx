@@ -54,13 +54,13 @@ export const Sidebar: React.FC = () => {
   };
 
   const sportsNav = [
-    {
-      id: 'sports-overview' as ActivePage,
-      label: 'Sports Overview',
-      icon: Compass,
-      color: 'text-indigo-600 dark:text-indigo-400',
-      bg: 'bg-indigo-50 dark:bg-indigo-950/60',
-    },
+    // {
+    //   id: 'sports-overview' as ActivePage,
+    //   label: 'Sports Overview',
+    //   icon: Compass,
+    //   color: 'text-indigo-600 dark:text-indigo-400',
+    //   bg: 'bg-indigo-50 dark:bg-indigo-950/60',
+    // },
     {
       id: 'virtual-gym' as ActivePage,
       label: 'Virtual Gym',
@@ -113,13 +113,13 @@ export const Sidebar: React.FC = () => {
   ];
 
   const fitnessNav = [
-    {
-      id: 'fitness-overview' as ActivePage,
-      label: 'Fitness Overview',
-      icon: Compass,
-      color: 'text-purple-600 dark:text-purple-400',
-      bg: 'bg-purple-50 dark:bg-purple-950/60',
-    },
+    // {
+    //   id: 'fitness-overview' as ActivePage,
+    //   label: 'Fitness Overview',
+    //   icon: Compass,
+    //   color: 'text-purple-600 dark:text-purple-400',
+    //   bg: 'bg-purple-50 dark:bg-purple-950/60',
+    // },
     {
       id: 'virtual-gym' as ActivePage,
       label: 'Virtual Gym',
@@ -137,14 +137,14 @@ export const Sidebar: React.FC = () => {
       color: 'text-blue-600 dark:text-blue-400',
       bg: 'bg-blue-50 dark:bg-blue-950/60',
     },
-    {
-      id: 'fitness-map' as ActivePage,
-      label: 'Interactive Gym Map',
-      icon: Map,
-      highlight: true,
-      color: 'text-teal-600 dark:text-teal-400',
-      bg: 'bg-teal-50 dark:bg-teal-950/60',
-    },
+    // {
+    //   id: 'fitness-map' as ActivePage,
+    //   label: 'Interactive Gym Map',
+    //   icon: Map,
+    //   highlight: true,
+    //   color: 'text-teal-600 dark:text-teal-400',
+    //   bg: 'bg-teal-50 dark:bg-teal-950/60',
+    // },
     {
       id: 'fitness-calculators' as ActivePage,
       label: 'BMI & BMR Suite',
@@ -161,13 +161,13 @@ export const Sidebar: React.FC = () => {
       color: 'text-violet-600 dark:text-violet-400',
       bg: 'bg-violet-50 dark:bg-violet-950/60',
     },
-    {
-      id: 'fitness-portal' as ActivePage,
-      label: user.role === 'trainer' ? 'Coach Client HQ' : 'My Workout & Meals',
-      icon: CalendarCheck,
-      color: 'text-emerald-600 dark:text-emerald-400',
-      bg: 'bg-emerald-50 dark:bg-emerald-950/60',
-    },
+    // {
+    //   id: 'fitness-portal' as ActivePage,
+    //   label: user.role === 'trainer' ? 'Coach Client HQ' : 'My Workout & Meals',
+    //   icon: CalendarCheck,
+    //   color: 'text-emerald-600 dark:text-emerald-400',
+    //   bg: 'bg-emerald-50 dark:bg-emerald-950/60',
+    // },
     {
       id: 'fitness-buddy' as ActivePage,
       label: 'Motivation Buddy',
@@ -183,14 +183,14 @@ export const Sidebar: React.FC = () => {
       color: 'text-rose-600 dark:text-rose-400',
       bg: 'bg-rose-50 dark:bg-rose-950/60',
     },
-    {
-      id: 'fitness-passes' as ActivePage,
-      label: 'My Free Trial Passes',
-      icon: Ticket,
-      badge: `${passes.filter((p) => p.type === 'gym_pass').length}`,
-      color: 'text-indigo-600 dark:text-indigo-400',
-      bg: 'bg-indigo-50 dark:bg-indigo-950/60',
-    },
+    // {
+    //   id: 'fitness-passes' as ActivePage,
+    //   label: 'My Free Trial Passes',
+    //   icon: Ticket,
+    //   badge: `${passes.filter((p) => p.type === 'gym_pass').length}`,
+    //   color: 'text-indigo-600 dark:text-indigo-400',
+    //   bg: 'bg-indigo-50 dark:bg-indigo-950/60',
+    // },
   ];
 
   const currentNav = mode === 'sports' ? sportsNav : fitnessNav;
