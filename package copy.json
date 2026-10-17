@@ -1,0 +1,11 @@
+{
+  "name": "hacksprint-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix sports-fitness-app run dev",
+    "build": "npm --prefix sports-fitness-app run build",
+    "preview": "npm --prefix sports-fitness-app run preview"
+  }
+}
+
