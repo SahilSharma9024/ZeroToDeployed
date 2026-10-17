@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-[#FAFAFA] text-slate-800 antialiased selection:bg-purple-100 selection:text-purple-800;
+    @apply bg-[#EDF2F7] dark:bg-[#0A0E17] text-slate-800 dark:text-slate-100 antialiased selection:bg-purple-200 selection:text-purple-900;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }

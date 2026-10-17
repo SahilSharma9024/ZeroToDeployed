@@ -22,7 +22,8 @@ export type ActivePage =
   | 'fitness-portal'
   | 'fitness-buddy'
   | 'fitness-exercises'
-  | 'fitness-passes';
+  | 'fitness-passes'
+  | 'virtual-gym';
 
 export interface UserProfile {
   id: string;

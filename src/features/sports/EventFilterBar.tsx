@@ -37,7 +37,7 @@ export const EventFilterBar: React.FC<EventFilterBarProps> = ({
   setSearchQuery,
 }) => {
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 shadow-soft border border-slate-200/80 dark:border-slate-800 space-y-4">
+    <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 shadow-md ring-1 ring-slate-900/[0.04] dark:ring-white/[0.05] border border-slate-200/90 dark:border-slate-800 space-y-4">
       
       {/* Top Search & Filter Bar */}
       <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
@@ -49,13 +49,13 @@ export const EventFilterBar: React.FC<EventFilterBarProps> = ({
             placeholder="Search events, turfs, or venues..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-800 transition-all"
+            className="w-full pl-9 pr-4 py-2.5 rounded-2xl bg-slate-100/80 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:focus:bg-slate-800 transition-all placeholder:text-slate-400"
           />
           <Filter className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
         </div>
 
         {/* Indoor / Outdoor Segmented Pills */}
-        <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200/70 dark:border-slate-700 w-full sm:w-auto">
+        <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 w-full sm:w-auto">
           {(['All', 'Indoor', 'Outdoor'] as const).map((v) => (
             <button
               key={v}

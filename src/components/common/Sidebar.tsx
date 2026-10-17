@@ -18,6 +18,8 @@ import {
   CalendarCheck,
   PanelLeftClose,
   PanelLeftOpen,
+  Gamepad2,
+  Sparkles,
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {

@@ -59,14 +59,15 @@ export const SportsDashboard: React.FC<SportsDashboardProps> = ({ initialSubTab 
     <div className="space-y-8 animate-fadeIn">
       
       {/* Weather-Adaptive Intelligence Banner */}
-      <div className="bg-gradient-to-r from-sky-50 via-indigo-50 to-purple-50 dark:from-sky-950/40 dark:via-indigo-950/40 dark:to-purple-950/40 rounded-3xl p-4 sm:p-5 border border-sky-200/70 dark:border-sky-800/50 shadow-soft flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-800 text-sky-600 flex items-center justify-center shadow-soft border border-sky-100 dark:border-sky-800 shrink-0">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-sky-300/80 dark:border-sky-800 shadow-md ring-1 ring-sky-500/20 relative overflow-hidden flex items-center justify-between gap-4">
+        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-sky-400 to-indigo-600" />
+        <div className="flex items-center gap-3.5 pl-1.5">
+          <div className="w-11 h-11 rounded-2xl bg-sky-50 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 flex items-center justify-center shadow-sm border border-sky-200 dark:border-sky-800 shrink-0">
             <CloudRain className="w-5 h-5 animate-bounce" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-sky-200 dark:bg-sky-900 text-sky-800 dark:text-sky-200">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-700/50">
                 Weather Intelligence • City Forecast
               </span>
               <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Updated 5m ago</span>
@@ -84,7 +85,7 @@ export const SportsDashboard: React.FC<SportsDashboardProps> = ({ initialSubTab 
           onClick={() => {
             setActivePage('sports-map');
           }}
-          className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 text-xs font-bold border border-indigo-200 dark:border-indigo-700 shadow-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/50 transition-colors whitespace-nowrap"
+          className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all whitespace-nowrap"
         >
           <span>View Map Radar</span>
           <ArrowRight className="w-3.5 h-3.5" />
@@ -94,86 +95,52 @@ export const SportsDashboard: React.FC<SportsDashboardProps> = ({ initialSubTab 
       {/* Hero Quick Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 border border-purple-100 dark:border-purple-900/40 shadow-soft flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center font-bold">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-md ring-1 ring-slate-900/[0.04] dark:ring-white/[0.05] hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3.5 relative overflow-hidden group">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-purple-500" />
+          <div className="w-11 h-11 rounded-2xl bg-purple-100 dark:bg-purple-950/70 text-purple-700 dark:text-purple-300 flex items-center justify-center font-bold shadow-sm shrink-0 group-hover:scale-105 transition-transform">
             <Trophy className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-lg font-extrabold text-slate-900 dark:text-white block leading-tight">{events.length}</span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Active Tournaments</span>
+            <span className="text-xl font-black text-slate-900 dark:text-white block leading-tight">{events.length}</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Active Tournaments</span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 border border-rose-100 dark:border-rose-900/40 shadow-soft flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-300 flex items-center justify-center font-bold">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-md ring-1 ring-slate-900/[0.04] dark:ring-white/[0.05] hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3.5 relative overflow-hidden group">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-rose-500" />
+          <div className="w-11 h-11 rounded-2xl bg-rose-100 dark:bg-rose-950/70 text-rose-600 dark:text-rose-300 flex items-center justify-center font-bold shadow-sm shrink-0 group-hover:scale-105 transition-transform">
             <Users className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-lg font-extrabold text-slate-900 dark:text-white block leading-tight">{ghostSubs.length}</span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">SOS Ghost Subs</span>
+            <span className="text-xl font-black text-slate-900 dark:text-white block leading-tight">{ghostSubs.length}</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">SOS Ghost Subs</span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 border border-indigo-100 dark:border-indigo-900/40 shadow-soft flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center font-bold">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-md ring-1 ring-slate-900/[0.04] dark:ring-white/[0.05] hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3.5 relative overflow-hidden group">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-indigo-500" />
+          <div className="w-11 h-11 rounded-2xl bg-indigo-100 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 flex items-center justify-center font-bold shadow-sm shrink-0 group-hover:scale-105 transition-transform">
             <MapPin className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-lg font-extrabold text-slate-900 dark:text-white block leading-tight">{turfs.length}</span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Verified Turfs</span>
+            <span className="text-xl font-black text-slate-900 dark:text-white block leading-tight">{turfs.length}</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Verified Turfs</span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 border border-emerald-100 dark:border-emerald-900/40 shadow-soft flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-md ring-1 ring-slate-900/[0.04] dark:ring-white/[0.05] hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3.5 relative overflow-hidden group">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-emerald-500" />
+          <div className="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold shadow-sm shrink-0 group-hover:scale-105 transition-transform">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-lg font-extrabold text-slate-900 dark:text-white block leading-tight">{user.turfElo}</span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Your Turf ELO</span>
+            <span className="text-xl font-black text-slate-900 dark:text-white block leading-tight">{user.turfElo}</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Your Turf ELO</span>
           </div>
         </div>
 
       </div>
 
-      {/* Main Section Navigation Tabs */}
-      <div className="flex items-center gap-2 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 w-fit">
-        <button
-          onClick={() => setActiveTab('events')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'events'
-              ? 'bg-white dark:bg-slate-900 text-purple-700 dark:text-purple-300 shadow-sm border border-purple-100 dark:border-purple-900/40'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-          }`}
-        >
-          Upcoming Sports Events ({events.length})
-        </button>
-
-        <button
-          onClick={() => setActiveTab('turfs')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'turfs'
-              ? 'bg-white dark:bg-slate-900 text-purple-700 dark:text-purple-300 shadow-sm border border-purple-100 dark:border-purple-900/40'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-          }`}
-        >
-          Nearby Turfs & Arenas ({turfs.length})
-        </button>
-
-        <button
-          onClick={() => setActiveTab('ghostSub')}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'ghostSub'
-              ? 'bg-rose-500 text-white shadow-pastel-rose'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-          }`}
-        >
-          <span>Ghost Sub & Matchmaker</span>
-          <span className="px-1.5 py-0.2 rounded-full bg-rose-200 dark:bg-rose-900 text-rose-900 dark:text-rose-200 text-[10px]">
-            {ghostSubs.length} Live
-          </span>
-        </button>
-      </div>
 
       {/* Active Tab Content */}
       {activeTab === 'events' && (

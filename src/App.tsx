@@ -21,6 +21,7 @@ import { AiPersonalTrainer } from './features/fitness/AiPersonalTrainer';
 import { GymBuddyFinder } from './features/fitness/GymBuddyFinder';
 import { ExerciseLibrary } from './features/fitness/ExerciseLibrary';
 import { PassesPage } from './features/passes/PassesPage';
+import { VirtualGymPage } from './features/virtualGym/VirtualGymPage';
 
 const MainLayout: React.FC = () => {
   const { activePage, user } = useApp();
@@ -63,6 +64,10 @@ const MainLayout: React.FC = () => {
         return <ExerciseLibrary />;
       case 'fitness-passes':
         return <PassesPage filterCategory="fitness" />;
+
+      // Gamified Virtual Gym RPG View
+      case 'virtual-gym':
+        return <VirtualGymPage />;
 
       default:
         return <HomePage />;
