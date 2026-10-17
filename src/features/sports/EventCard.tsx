@@ -25,7 +25,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200/80 dark:border-slate-800 shadow-soft hover:shadow-soft-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+    <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200/90 dark:border-slate-800 shadow-md ring-1 ring-slate-900/[0.04] dark:ring-white/[0.05] hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
       
       {/* Event Image & Badges */}
       <div className="relative h-48 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
