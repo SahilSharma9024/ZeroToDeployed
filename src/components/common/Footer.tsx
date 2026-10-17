@@ -19,7 +19,7 @@ export const Footer: React.FC = () => {
                 <span className="font-extrabold text-sm">⚡</span>
               </div>
               <span className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
-                KinetiQ
+                KINETIX
               </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
@@ -138,7 +138,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
-          <p>© {new Date().getFullYear()} KinetiQ Athletic Technologies. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} KINETIX Athletic Technologies. All rights reserved.</p>
           <div className="flex items-center gap-6 font-medium">
             <span className="hover:text-slate-800 dark:hover:text-slate-200 cursor-pointer">Privacy Policy</span>
             <span className="hover:text-slate-800 dark:hover:text-slate-200 cursor-pointer">Terms of Service</span>

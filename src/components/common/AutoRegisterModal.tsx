@@ -69,7 +69,7 @@ export const AutoRegisterModal: React.FC = () => {
                 Universal Athlete & Fitness ID Synced
               </h4>
               <p className="text-[11px] text-emerald-700 dark:text-emerald-400 leading-relaxed mt-0.5">
-                All mandatory participant documents, medical waivers, and category qualifications are pre-filled automatically from your KinetiQ Profile.
+                All mandatory participant documents, medical waivers, and category qualifications are pre-filled automatically from your KINETIX Profile.
               </p>
             </div>
           </div>
