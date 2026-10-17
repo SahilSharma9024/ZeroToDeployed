@@ -5,6 +5,8 @@ export interface GymVenue {
   reviewCount: number;
   category: 'Premium Gym' | 'CrossFit Box' | 'Strength & Conditioning' | 'Yoga & Pilates Studio';
   distanceKm: number;
+  lat: number;
+  lng: number;
   location: string;
   priceMonthly: number;
   freeTrialAvailable: boolean;
@@ -24,7 +26,7 @@ export interface ClientProfile {
   currentWeightKg: number;
   targetWeightKg: number;
   planDurationWeeks: number;
-  adherenceRate: number; // percentage
+  adherenceRate: number;
   assignedDietPlanId?: string;
   assignedWorkoutPlanId?: string;
   notesFromTrainer?: string;
@@ -59,9 +61,9 @@ export interface CompletePlan {
   goal: string;
   dailyCaloricTarget: number;
   macros: {
-    protein: number; // grams
-    carbs: number;   // grams
-    fats: number;    // grams
+    protein: number;
+    carbs: number;
+    fats: number;
   };
   weeklyWorkouts: WorkoutDayPlan[];
   dailyMeals: DietMeal[];
@@ -78,7 +80,7 @@ export interface ExerciseItem {
   equipment: string;
   steps: string[];
   commonMistakes: string[];
-  youtubeVideoId: string; // Real YouTube ID for embed video
+  youtubeVideoId: string;
   thumbnailUrl: string;
 }
 
@@ -95,4 +97,3 @@ export interface GymBuddyBeacon {
   lookingFor: string;
   contactHandle: string;
 }
-

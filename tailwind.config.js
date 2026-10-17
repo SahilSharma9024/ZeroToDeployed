@@ -4,28 +4,29 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         pastel: {
-          rose: "#ffe4e6",      // rose-100
-          roseDark: "#e11d48",  // rose-600
-          lavender: "#ede9fe",  // violet-100
-          lavenderDark: "#7c3aed", // violet-600
-          purple: "#f3e8ff",    // purple-100
-          purpleDark: "#9333ea", // purple-600
-          peach: "#ffedd5",     // orange-100
-          peachDark: "#ea580c",  // orange-600
-          mint: "#dcfce7",      // emerald-100
-          mintDark: "#059669",   // emerald-600
-          sky: "#e0f2fe",       // sky-100
-          skyDark: "#0284c7",    // sky-600
-          lemon: "#fef9c3",     // yellow-100
+          rose: "#ffe4e6",
+          roseDark: "#e11d48",
+          lavender: "#ede9fe",
+          lavenderDark: "#7c3aed",
+          purple: "#f3e8ff",
+          purpleDark: "#9333ea",
+          peach: "#ffedd5",
+          peachDark: "#ea580c",
+          mint: "#dcfce7",
+          mintDark: "#059669",
+          sky: "#e0f2fe",
+          skyDark: "#0284c7",
+          lemon: "#fef9c3",
           offwhite: "#f8fafc",
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       boxShadow: {
         'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
@@ -38,4 +39,3 @@ export default {
   },
   plugins: [],
 }
-

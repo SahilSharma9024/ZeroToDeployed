@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, CheckCircle, QrCode, Download, Share2, Calendar, MapPin, Ticket } from 'lucide-react';
+import { X, CheckCircle, Download, Share2, Calendar, MapPin, Ticket } from 'lucide-react';
 
 export const QrPassModal: React.FC = () => {
   const { activeQrPass, setActiveQrPass, passes } = useApp();
@@ -8,14 +8,14 @@ export const QrPassModal: React.FC = () => {
   if (!activeQrPass) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
+      <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
         
         {/* Header */}
         <div className="p-5 bg-gradient-to-r from-purple-600 via-indigo-600 to-rose-500 text-white flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Ticket className="w-5 h-5 text-purple-200" />
-            <h3 className="font-extrabold text-sm tracking-wide uppercase">Official Athlete Pass</h3>
+            <h3 className="font-extrabold text-sm tracking-wide uppercase">Official Athlete Pass • KINETIX</h3>
           </div>
           <button
             onClick={() => setActiveQrPass(null)}
@@ -29,21 +29,21 @@ export const QrPassModal: React.FC = () => {
         <div className="p-6 space-y-5">
           
           <div className="text-center">
-            <span className="inline-block px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 mb-2">
+            <span className="inline-block px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 mb-2">
               ✓ Registration Confirmed & Active
             </span>
-            <h2 className="text-lg font-bold text-slate-900 leading-snug">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white leading-snug">
               {activeQrPass.title}
             </h2>
-            <p className="text-xs text-purple-600 font-semibold mt-0.5">
+            <p className="text-xs text-purple-600 dark:text-purple-400 font-semibold mt-0.5">
               {activeQrPass.category}
             </p>
           </div>
 
           {/* QR Code Card */}
-          <div className="p-5 rounded-2xl bg-gradient-to-b from-purple-50 to-indigo-50/50 border border-purple-100 flex flex-col items-center justify-center shadow-inner">
+          <div className="p-5 rounded-2xl bg-gradient-to-b from-purple-50 to-indigo-50/50 dark:from-slate-800 dark:to-slate-800/60 border border-purple-100 dark:border-slate-700 flex flex-col items-center justify-center shadow-inner">
             <div className="p-4 bg-white rounded-2xl shadow-soft border border-slate-200/80 mb-3">
-              {/* Simulated crisp high-contrast SVG QR code */}
+              {/* Crisp high-contrast SVG QR code */}
               <svg className="w-36 h-36" viewBox="0 0 100 100" fill="none">
                 <rect width="100" height="100" rx="4" fill="white" />
                 {/* Corner Finder 1 */}
@@ -77,40 +77,40 @@ export const QrPassModal: React.FC = () => {
                 <rect x="76" y="76" width="8" height="8" fill="#1e1b4b" />
               </svg>
             </div>
-            <p className="text-xs font-mono font-bold text-slate-800 tracking-wider">
+            <p className="text-xs font-mono font-bold text-slate-800 dark:text-slate-200 tracking-wider">
               {activeQrPass.ticketCode}
             </p>
-            <p className="text-[10px] text-slate-500 font-medium mt-0.5">
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
               Scan at venue entrance for instant check-in
             </p>
           </div>
 
           {/* Details breakdown */}
           <div className="space-y-2 text-xs">
-            <div className="flex items-center justify-between py-1.5 border-b border-slate-100">
-              <span className="text-slate-500 flex items-center gap-1.5">
+            <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+              <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-purple-500" /> Date & Time
               </span>
-              <span className="font-semibold text-slate-800">{activeQrPass.date}</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">{activeQrPass.date}</span>
             </div>
 
-            <div className="flex items-center justify-between py-1.5 border-b border-slate-100">
-              <span className="text-slate-500 flex items-center gap-1.5">
+            <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+              <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-rose-500" /> Venue
               </span>
-              <span className="font-semibold text-slate-800 text-right max-w-[200px] truncate">
+              <span className="font-semibold text-slate-800 dark:text-slate-200 text-right max-w-[200px] truncate">
                 {activeQrPass.venue}
               </span>
             </div>
 
-            <div className="flex items-center justify-between py-1.5 border-b border-slate-100">
-              <span className="text-slate-500">Athlete Name</span>
-              <span className="font-bold text-slate-900">{activeQrPass.athleteName}</span>
+            <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+              <span className="text-slate-500 dark:text-slate-400">Athlete Name</span>
+              <span className="font-bold text-slate-900 dark:text-white">{activeQrPass.athleteName}</span>
             </div>
 
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-slate-500">Pass Fee</span>
-              <span className="font-bold text-emerald-600">{activeQrPass.cost}</span>
+              <span className="text-slate-500 dark:text-slate-400">Pass Fee</span>
+              <span className="font-bold text-emerald-600 dark:text-emerald-400">{activeQrPass.cost}</span>
             </div>
           </div>
 
@@ -127,8 +127,8 @@ export const QrPassModal: React.FC = () => {
                     onClick={() => setActiveQrPass(p)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap border transition-all ${
                       p.id === activeQrPass.id
-                        ? 'bg-purple-100 text-purple-800 border-purple-300'
-                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                        ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border-purple-300 dark:border-purple-700'
+                        : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-100'
                     }`}
                   >
                     {p.title.substring(0, 18)}...
@@ -142,14 +142,14 @@ export const QrPassModal: React.FC = () => {
           <div className="flex items-center gap-2 pt-2">
             <button
               onClick={() => alert(`Downloaded pass PDF: ${activeQrPass.ticketCode}.pdf`)}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-colors"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors"
             >
               <Download className="w-4 h-4" />
               Download Offline Pass
             </button>
             <button
-              onClick={() => alert(`Share link copied: https://pulseplay.io/pass/${activeQrPass.ticketCode}`)}
-              className="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors"
+              onClick={() => alert(`Share link copied: https://kinetix.io/pass/${activeQrPass.ticketCode}`)}
+              className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors"
               title="Share pass"
             >
               <Share2 className="w-4 h-4" />
@@ -161,4 +161,3 @@ export const QrPassModal: React.FC = () => {
     </div>
   );
 };
-

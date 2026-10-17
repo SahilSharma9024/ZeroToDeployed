@@ -21,6 +21,8 @@ export interface SportsEvent {
   venueName: string;
   address: string;
   distanceKm: number;
+  lat: number;
+  lng: number;
   entryFee: number;
   isFree: boolean;
   totalSpots: number;
@@ -43,6 +45,8 @@ export interface TurfVenue {
   reviewCount: number;
   pricePerHour: number;
   distanceKm: number;
+  lat: number;
+  lng: number;
   location: string;
   imageUrl: string;
   amenities: string[];
@@ -66,7 +70,7 @@ export interface GhostSubBeacon {
   urgency: 'Immediate (< 2 hrs)' | 'Today' | 'Tomorrow' | 'Weekend';
   acceptedUsers: string[];
   description: string;
-  isPartnerFinder?: boolean; // For tennis/badminton partner or cricket squad builder
+  isPartnerFinder?: boolean;
 }
 
 export interface MatchScheduleRequest {
@@ -80,4 +84,3 @@ export interface MatchScheduleRequest {
   notes: string;
   status: 'Open' | 'Matched' | 'Completed';
 }
-

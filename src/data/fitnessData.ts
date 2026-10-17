@@ -8,6 +8,8 @@ export const INITIAL_GYMS: GymVenue[] = [
     reviewCount: 520,
     category: 'Strength & Conditioning',
     distanceKm: 1.2,
+    lat: 12.9341,
+    lng: 77.6225,
     location: 'Koramangala 4th Block, 80ft Rd',
     priceMonthly: 2800,
     freeTrialAvailable: true,
@@ -24,6 +26,8 @@ export const INITIAL_GYMS: GymVenue[] = [
     reviewCount: 380,
     category: 'Yoga & Pilates Studio',
     distanceKm: 2.1,
+    lat: 12.9698,
+    lng: 77.6415,
     location: 'Indiranagar 12th Main',
     priceMonthly: 3500,
     freeTrialAvailable: true,
@@ -40,6 +44,8 @@ export const INITIAL_GYMS: GymVenue[] = [
     reviewCount: 410,
     category: 'CrossFit Box',
     distanceKm: 3.4,
+    lat: 12.9125,
+    lng: 77.6445,
     location: 'HSR Layout Sector 3',
     priceMonthly: 3200,
     freeTrialAvailable: true,
@@ -56,6 +62,8 @@ export const INITIAL_GYMS: GymVenue[] = [
     reviewCount: 650,
     category: 'Premium Gym',
     distanceKm: 2.8,
+    lat: 12.9385,
+    lng: 77.6180,
     location: 'Koramangala 7th Block',
     priceMonthly: 2400,
     freeTrialAvailable: true,
@@ -248,4 +256,3 @@ export const PRESET_SAMPLE_PLANS: Record<string, CompletePlan> = {
     ]
   }
 };
-

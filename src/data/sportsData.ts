@@ -3,14 +3,16 @@ import { SportsEvent, TurfVenue, GhostSubBeacon, MatchScheduleRequest } from '..
 export const INITIAL_EVENTS: SportsEvent[] = [
   {
     id: 'evt_1',
-    title: 'Metro Bangalore 5v5 Turf Championship',
+    title: 'Metro 5v5 Turf Championship',
     sport: 'Football',
     venueType: 'Outdoor',
     date: '2026-10-25',
     time: '04:00 PM - 09:00 PM',
     venueName: 'KickOff Arena, Marathahalli',
-    address: 'Outer Ring Rd, Marathahalli, Bengaluru',
+    address: 'Outer Ring Rd, Marathahalli',
     distanceKm: 4.2,
+    lat: 12.9569,
+    lng: 77.7011,
     entryFee: 1200,
     isFree: false,
     totalSpots: 16,
@@ -18,10 +20,10 @@ export const INITIAL_EVENTS: SportsEvent[] = [
     skillTier: 'Intermediate',
     ageGroup: 'Open (16+)',
     prizes: '₹25,000 Cash + Trophies & Jerseys',
-    organizer: 'Bangalore Football Collective',
+    organizer: 'Football Collective',
     imageUrl: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800',
     tags: ['5v5', 'FIFA Certified Turf', 'Floodlights', 'Live Stream'],
-    rules: ['Shin guards mandatory', '2x15 min halves', 'Yellow/Red card disciplinary rules']
+    rules: ['Shin guards mandatory', '2x15 min halves', 'Yellow/Red card rules apply']
   },
   {
     id: 'evt_2',
@@ -31,8 +33,10 @@ export const INITIAL_EVENTS: SportsEvent[] = [
     date: '2026-10-26',
     time: '09:00 AM - 05:00 PM',
     venueName: 'Surpass Badminton Academy',
-    address: 'Koramangala 4th Block, Bengaluru',
+    address: 'Koramangala 4th Block',
     distanceKm: 1.8,
+    lat: 12.9345,
+    lng: 77.6265,
     entryFee: 500,
     isFree: false,
     totalSpots: 32,
@@ -40,7 +44,7 @@ export const INITIAL_EVENTS: SportsEvent[] = [
     skillTier: 'All Levels',
     ageGroup: 'Open (16+)',
     prizes: 'Yonex Astrox Rackets + ₹10,000 Vouchers',
-    organizer: 'Karnataka Shuttle Federation',
+    organizer: 'Karnataka Shuttle Guild',
     imageUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&q=80&w=800',
     tags: ['Indoor Wooden Courts', 'Air Conditioned', 'Mavis 350 Shuttles'],
     rules: ['Non-marking shoes only', 'BWF 21-point knockout format']
@@ -53,8 +57,10 @@ export const INITIAL_EVENTS: SportsEvent[] = [
     date: '2026-10-24',
     time: '07:30 PM - 11:30 PM',
     venueName: 'Indiranagar Urban Turf',
-    address: '100ft Road, Indiranagar, Bengaluru',
+    address: '100ft Road, Indiranagar',
     distanceKm: 3.1,
+    lat: 12.9719,
+    lng: 77.6412,
     entryFee: 800,
     isFree: false,
     totalSpots: 8,
@@ -64,7 +70,7 @@ export const INITIAL_EVENTS: SportsEvent[] = [
     prizes: 'Medals + ₹8,000 Cash Pool',
     organizer: 'Indiranagar CricClub',
     imageUrl: 'https://images.unsplash.com/photo-1531415074868-036b107e775a?auto=format&fit=crop&q=80&w=800',
-    tags: ['Tennis Ball', 'Covered Netting', 'Live Music & Snacks'],
+    tags: ['Tennis Ball', 'Covered Netting', 'Music & Refreshments'],
     rules: ['6 overs per side', 'Direct hit over turf roof is out']
   },
   {
@@ -77,6 +83,8 @@ export const INITIAL_EVENTS: SportsEvent[] = [
     venueName: 'Agara Lake Perimeter',
     address: 'Agara Lake Trail, HSR Layout',
     distanceKm: 2.5,
+    lat: 12.9212,
+    lng: 77.6433,
     entryFee: 0,
     isFree: true,
     totalSpots: 150,
@@ -84,7 +92,7 @@ export const INITIAL_EVENTS: SportsEvent[] = [
     skillTier: 'All Levels',
     ageGroup: 'Open (16+)',
     prizes: 'Finisher Medals, Electrolytes & Breakfast',
-    organizer: 'HSR Pacers Community',
+    organizer: 'Pacers Community',
     imageUrl: 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&q=80&w=800',
     tags: ['Free Entry', 'Scenic Lake Trail', 'Hydration Stations', 'BIB Tracking'],
     rules: ['Safety route briefing at 5:30 AM', 'Timing chips provided']
@@ -97,8 +105,10 @@ export const INITIAL_EVENTS: SportsEvent[] = [
     date: '2026-11-01',
     time: '08:00 AM - 04:00 PM',
     venueName: 'TopSpin Tennis Complex',
-    address: 'Sarjapur Main Road, Bengaluru',
+    address: 'Sarjapur Main Road',
     distanceKm: 6.4,
+    lat: 12.9189,
+    lng: 77.6755,
     entryFee: 750,
     isFree: false,
     totalSpots: 24,
@@ -106,7 +116,7 @@ export const INITIAL_EVENTS: SportsEvent[] = [
     skillTier: 'Intermediate',
     ageGroup: 'Open (16+)',
     prizes: 'Wilson Pro Staff gear + ₹15,000 Cash',
-    organizer: 'Bengaluru Tennis Club',
+    organizer: 'Tennis Club',
     imageUrl: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&q=80&w=800',
     tags: ['Rolled Clay', 'Ball Boys Available', 'Locker Rooms'],
     rules: ['Best of 3 sets with super tiebreak in 3rd']
@@ -119,8 +129,10 @@ export const INITIAL_EVENTS: SportsEvent[] = [
     date: '2026-10-31',
     time: '11:00 AM - 04:00 PM',
     venueName: 'SmashZone Indoor Arena',
-    address: 'Domlur Flyover Ring Rd, Bengaluru',
+    address: 'Domlur Flyover Ring Rd',
     distanceKm: 3.8,
+    lat: 12.9609,
+    lng: 77.6387,
     entryFee: 600,
     isFree: false,
     totalSpots: 16,
@@ -128,7 +140,7 @@ export const INITIAL_EVENTS: SportsEvent[] = [
     skillTier: 'All Levels',
     ageGroup: 'Open (16+)',
     prizes: 'Carbon Paddle set & trophies',
-    organizer: 'Pickleball India Guild',
+    organizer: 'Pickleball Guild',
     imageUrl: 'https://images.unsplash.com/photo-1519766304817-4f37bda74a29?auto=format&fit=crop&q=80&w=800',
     tags: ['AC Arena', 'Fast-paced', 'Paddles Provided'],
     rules: ['Non-volley kitchen zone rules strictly enforced']
@@ -145,6 +157,8 @@ export const INITIAL_TURFS: TurfVenue[] = [
     reviewCount: 312,
     pricePerHour: 1100,
     distanceKm: 1.5,
+    lat: 12.9352,
+    lng: 77.6245,
     location: 'Koramangala 6th Block',
     imageUrl: 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&q=80&w=800',
     amenities: ['FIFA Quality AstroTurf', 'High-Beam Floodlights', 'Bibs & Balls Provided', 'Shower & Locker', 'Cafeteria'],
@@ -160,9 +174,11 @@ export const INITIAL_TURFS: TurfVenue[] = [
     reviewCount: 450,
     pricePerHour: 750,
     distanceKm: 2.3,
+    lat: 12.9150,
+    lng: 77.6480,
     location: 'HSR Layout Sector 1',
     imageUrl: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&q=80&w=800',
-    amenities: ['Synthetic Maple Courts', 'Air Conditioned', 'Pro Shop & Racket Restringing', 'Parking', 'Physio On Site'],
+    amenities: ['Synthetic Maple Courts', 'Air Conditioned', 'Pro Shop & Restringing', 'Parking', 'Physio On Site'],
     availableSlotsToday: ['04:00 PM', '06:00 PM', '08:00 PM'],
     instantBookingAvailable: true,
   },
@@ -175,6 +191,8 @@ export const INITIAL_TURFS: TurfVenue[] = [
     reviewCount: 180,
     pricePerHour: 900,
     distanceKm: 3.9,
+    lat: 12.9730,
+    lng: 77.6390,
     location: 'Indiranagar Defense Colony',
     imageUrl: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&q=80&w=800',
     amenities: ['Rolled Clay Court', 'Night Lighting', 'Ball Machine Rental', 'Coaches on Standby'],
@@ -199,7 +217,7 @@ export const INITIAL_GHOST_SUBS: GhostSubBeacon[] = [
     skillTier: 'Intermediate',
     urgency: 'Immediate (< 2 hrs)',
     acceptedUsers: [],
-    description: 'Our regular center-mid caught a cold. Turf is booked and confirmed! Fast passing game, friendly team. Just bring boots and shin guards.'
+    description: 'Our regular center-mid caught a cold. Turf is confirmed! Fast passing game, friendly team. Just bring boots and shin guards.'
   },
   {
     id: 'ghost_2',
@@ -280,4 +298,3 @@ export const INITIAL_MATCH_REQUESTS: MatchScheduleRequest[] = [
     status: 'Open'
   }
 ];
-

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { AppMode, UserProfile, RegistrationPass } from '../types';
+import { AppMode, UserProfile, RegistrationPass, ThemeMode, ActivePage } from '../types';
 import { SportsEvent, TurfVenue, GhostSubBeacon, MatchScheduleRequest } from '../types/sports';
 import { ClientProfile, GymBuddyBeacon, GymVenue } from '../types/fitness';
 import { INITIAL_USER, INITIAL_PASSES } from '../data/initialUserData';
@@ -22,9 +22,26 @@ interface AutoRegisterTarget {
 interface AppContextType {
   mode: AppMode;
   setMode: (mode: AppMode) => void;
+  activePage: ActivePage;
+  setActivePage: (page: ActivePage) => void;
+  theme: ThemeMode;
+  toggleTheme: () => void;
+  
   user: UserProfile;
   updateUser: (updated: Partial<UserProfile>) => void;
   passes: RegistrationPass[];
+  
+  // Daily Streak
+  incrementStreak: () => void;
+  
+  // Geolocation
+  userLocation: { lat: number; lng: number } | null;
+  requestUserLocation: () => void;
+  isLocating: boolean;
+  
+  // Mobile UI
+  isMobileSidebarOpen: boolean;
+  setIsMobileSidebarOpen: (open: boolean) => void;
   
   // Sports State
   events: SportsEvent[];
@@ -60,19 +77,38 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Mode toggle: Sports or Fitness
-  const [mode, setMode] = useState<AppMode>('sports');
+  const [mode, setModeState] = useState<AppMode>('sports');
+
+  // Active page navigation
+  const [activePage, setActivePage] = useState<ActivePage>('home');
+
+  // Mobile sidebar state
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // Theme: light / dark
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    const saved = localStorage.getItem('kinetix_theme');
+    return (saved as ThemeMode) || 'light';
+  });
 
   // User Profile
   const [user, setUser] = useState<UserProfile>(() => {
-    const saved = localStorage.getItem('pulseplay_user');
+    const saved = localStorage.getItem('kinetix_user');
     return saved ? JSON.parse(saved) : INITIAL_USER;
   });
 
   // Passes
   const [passes, setPasses] = useState<RegistrationPass[]>(() => {
-    const saved = localStorage.getItem('pulseplay_passes');
+    const saved = localStorage.getItem('kinetix_passes');
     return saved ? JSON.parse(saved) : INITIAL_PASSES;
   });
+
+  // Geolocation
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>({
+    lat: 12.9345, // default Koramangala, Bengaluru
+    lng: 77.6265,
+  });
+  const [isLocating, setIsLocating] = useState(false);
 
   // Sports items
   const [events] = useState<SportsEvent[]>(INITIAL_EVENTS);
@@ -90,16 +126,85 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeQrPass, setActiveQrPass] = useState<RegistrationPass | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
+  // Synchronize Dark Theme class on <html> document
   useEffect(() => {
-    localStorage.setItem('pulseplay_user', JSON.stringify(user));
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('kinetix_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
+
+  const setMode = (newMode: AppMode) => {
+    setModeState(newMode);
+    // When switching mode, change active page to that mode's overview
+    setActivePage(newMode === 'sports' ? 'sports-overview' : 'fitness-overview');
+  };
+
+  useEffect(() => {
+    localStorage.setItem('kinetix_user', JSON.stringify(user));
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem('pulseplay_passes', JSON.stringify(passes));
+    localStorage.setItem('kinetix_passes', JSON.stringify(passes));
   }, [passes]);
 
   const updateUser = (updated: Partial<UserProfile>) => {
     setUser((prev) => ({ ...prev, ...updated }));
+  };
+
+  // Streak Action
+  const incrementStreak = () => {
+    const today = new Date().toISOString().split('T')[0];
+    if (user.lastCheckInDate === today) {
+      alert(`Awesome! You've already checked in today. Your streak is ${user.streakDays} days! 🔥`);
+      return;
+    }
+
+    const updatedStreak = user.streakDays + 1;
+    updateUser({
+      streakDays: updatedStreak,
+      lastCheckInDate: today,
+    });
+
+    try {
+      confetti({
+        particleCount: 60,
+        spread: 60,
+        origin: { y: 0.6 },
+        colors: ['#f97316', '#ef4444', '#eab308'],
+      });
+    } catch {}
+  };
+
+  // Real Geolocation
+  const requestUserLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser. Using Bangalore coordinates.');
+      return;
+    }
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+        setIsLocating(false);
+      },
+      (err) => {
+        console.warn('Geolocation error:', err.message);
+        setIsLocating(false);
+        alert('Could not access live location. Using default city coordinates.');
+      },
+      { timeout: 8000 }
+    );
   };
 
   const addGhostSub = (beacon: Omit<GhostSubBeacon, 'id' | 'acceptedUsers'>) => {
@@ -130,9 +235,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         spread: 60,
         origin: { y: 0.7 },
       });
-    } catch {
-      // ignore
-    }
+    } catch {}
   };
 
   const addMatchRequest = (req: Omit<MatchScheduleRequest, 'id' | 'status'>) => {
@@ -188,7 +291,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       time: 'Standard Slot',
       venue: autoRegisterTarget.venue,
       registeredAt: new Date().toISOString().split('T')[0],
-      ticketCode: `PP-${Math.random().toString(36).substring(2, 7).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      ticketCode: `KNX-${Math.random().toString(36).substring(2, 7).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
       athleteName: user.name,
       status: 'Confirmed',
       cost: autoRegisterTarget.cost,
@@ -197,7 +300,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setPasses((prev) => [newPass, ...prev]);
     setAutoRegisterTarget(null);
 
-    // Trigger celebratory confetti
     try {
       confetti({
         particleCount: 80,
@@ -205,9 +307,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         origin: { y: 0.6 },
         colors: ['#fda4af', '#c084fc', '#86efac', '#38bdf8', '#fde047'],
       });
-    } catch {
-      // ignore
-    }
+    } catch {}
 
     return newPass;
   };
@@ -217,9 +317,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       value={{
         mode,
         setMode,
+        activePage,
+        setActivePage,
+        theme,
+        toggleTheme,
         user,
         updateUser,
         passes,
+        incrementStreak,
+        userLocation,
+        requestUserLocation,
+        isLocating,
+        isMobileSidebarOpen,
+        setIsMobileSidebarOpen,
         events,
         turfs,
         ghostSubs,
@@ -255,4 +365,3 @@ export const useApp = () => {
   }
   return context;
 };
-

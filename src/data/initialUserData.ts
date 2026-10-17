@@ -3,12 +3,14 @@ import { UserProfile, RegistrationPass } from '../types';
 export const INITIAL_USER: UserProfile = {
   id: 'usr_007',
   name: 'Aarav Sharma',
-  email: 'aarav.sharma@pulseplay.io',
-  phone: '+91 98765 43210',
+  email: 'aarav.sharma@kinetix.io',
+  phoneCountryCode: '+91',
+  phone: '98765 43210',
   avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250',
   role: 'athlete',
   age: 23,
   gender: 'Male',
+  unitSystem: 'metric',
   heightCm: 178,
   weightKg: 73.5,
   fitnessGoal: 'muscle_gain',
@@ -24,6 +26,8 @@ export const INITIAL_USER: UserProfile = {
   bloodGroup: 'B+',
   city: 'Bangalore / Koramangala',
   turfElo: 1420,
+  streakDays: 7,
+  lastCheckInDate: '2026-10-17',
 };
 
 export const INITIAL_PASSES: RegistrationPass[] = [
@@ -36,7 +40,7 @@ export const INITIAL_PASSES: RegistrationPass[] = [
     time: '08:00 AM - 02:00 PM',
     venue: 'PlayMania Turf, Indiranagar',
     registeredAt: '2026-10-15',
-    ticketCode: 'PP-CRIC-9921',
+    ticketCode: 'KNX-CRIC-9921',
     athleteName: 'Aarav Sharma',
     status: 'Confirmed',
     cost: '₹499 (Team Pass)',
@@ -50,10 +54,9 @@ export const INITIAL_PASSES: RegistrationPass[] = [
     time: 'All Day (06:00 AM - 10:00 PM)',
     venue: 'Cult.Fit Koramangala 5th Block',
     registeredAt: '2026-10-16',
-    ticketCode: 'PP-GYM-4412',
+    ticketCode: 'KNX-GYM-4412',
     athleteName: 'Aarav Sharma',
     status: 'Active',
     cost: 'FREE Trial',
   }
 ];
-
