@@ -20,6 +20,7 @@ import {
   PanelLeftOpen,
   Gamepad2,
 } from 'lucide-react';
+import { KinetiQMark } from './Logo';
 
 export const Sidebar: React.FC = () => {
   const {
@@ -224,14 +225,14 @@ export const Sidebar: React.FC = () => {
                   className="flex items-center gap-3 text-left group min-w-0 cursor-pointer"
                   title="Return to Home"
                 >
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-500 via-indigo-600 to-rose-500 flex items-center justify-center text-white shadow-soft group-hover:scale-105 transition-transform flex-shrink-0">
-                    <span className="font-extrabold text-base">⚡</span>
+                  <div className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-slate-800 text-white flex items-center justify-center shadow-sm border border-slate-800 dark:border-slate-700/80 group-hover:border-purple-500/50 group-hover:scale-105 transition-all flex-shrink-0">
+                    <KinetiQMark className="w-5 h-5 text-white" />
                   </div>
                   <div className="truncate">
                     <h1 className="text-lg font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5 truncate">
                       KinetiQ
                     </h1>
-                    <p className="text-[10px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider truncate">
+                    <p className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest truncate">
                       Sports & Fitness OS
                     </p>
                   </div>
@@ -264,10 +265,10 @@ export const Sidebar: React.FC = () => {
               <div className="flex flex-col items-center gap-2">
                 <button
                   onClick={() => handleNav('home')}
-                  className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-500 via-indigo-600 to-rose-500 flex items-center justify-center text-white shadow-soft hover:scale-105 transition-transform cursor-pointer"
+                  className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-slate-800 text-white flex items-center justify-center shadow-sm border border-slate-800 dark:border-slate-700/80 hover:border-purple-500/50 hover:scale-105 transition-all cursor-pointer"
                   title="KinetiQ Home"
                 >
-                  <span className="font-extrabold text-base">⚡</span>
+                  <KinetiQMark className="w-5 h-5 text-white" />
                 </button>
 
                 <button

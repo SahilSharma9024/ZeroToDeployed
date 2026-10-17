@@ -34,7 +34,7 @@ export const QrPassModal: React.FC = () => {
         <div className="shrink-0 px-4 py-3 sm:px-5 sm:py-3.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-rose-500 text-white flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Ticket className="w-4 h-4 text-purple-200" />
-            <h3 className="font-extrabold text-xs sm:text-sm tracking-wide uppercase">Official Athlete Pass • KINETIX</h3>
+            <h3 className="font-extrabold text-xs sm:text-sm tracking-wide uppercase">Official Athlete Pass • KinetiQ</h3>
           </div>
           <button
             onClick={() => setActiveQrPass(null)}
@@ -178,7 +178,7 @@ export const QrPassModal: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={() => alert(`Share link copied: https://kinetix.fit/pass/${activeQrPass.ticketCode}`)}
+              onClick={() => alert(`Share link copied: https://KinetiQ.fit/pass/${activeQrPass.ticketCode}`)}
               className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer"
               title="Share pass"
             >

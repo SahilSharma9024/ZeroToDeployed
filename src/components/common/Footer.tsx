@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Trophy, Dumbbell, ShieldCheck, Heart, Sparkles, MapPin, Zap } from 'lucide-react';
+import { KinetiQMark } from './Logo';
 
 export const Footer: React.FC = () => {
   const { setMode, setActivePage } = useApp();
@@ -15,8 +16,8 @@ export const Footer: React.FC = () => {
           {/* Brand Col */}
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-purple-500 via-indigo-600 to-rose-500 flex items-center justify-center text-white shadow-soft">
-                <span className="font-extrabold text-sm">⚡</span>
+              <div className="w-9 h-9 rounded-xl bg-slate-900 dark:bg-slate-800 text-white flex items-center justify-center shadow-sm border border-slate-800 dark:border-slate-700/80">
+                <KinetiQMark className="w-5 h-5 text-white" />
               </div>
               <span className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
                 KinetiQ

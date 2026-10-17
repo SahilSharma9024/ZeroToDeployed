@@ -3,7 +3,7 @@ import { UserProfile, RegistrationPass } from '../types';
 export const INITIAL_USER: UserProfile = {
   id: 'usr_007',
   name: 'Aarav Sharma',
-  email: 'aarav.sharma@KinetiQ.io',
+  email: 'aarav.sharma@KinetiQ.fit',
   phoneCountryCode: '+91',
   phone: '98765 43210',
   avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250',
