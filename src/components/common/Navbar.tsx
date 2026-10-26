@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
-  Trophy,
+  Users,
   Dumbbell,
   Ticket,
   Menu,
@@ -58,20 +58,21 @@ export const Navbar: React.FC = () => {
   }, [isProfileMenuOpen]);
 
   // Quick unit calculation for preview
-  const weightDisplay = user.unitSystem === 'imperial'
-    ? `${Math.round(user.weightKg * 2.20462)} lbs`
-    : `${user.weightKg} kg`;
+  const weightDisplay =
+    user.unitSystem === 'imperial'
+      ? `${Math.round(user.weightKg * 2.20462)} lbs`
+      : `${user.weightKg} kg`;
 
-  const heightDisplay = user.unitSystem === 'imperial'
-    ? `${Math.round(user.heightCm * 0.393701)} in`
-    : `${user.heightCm} cm`;
+  const heightDisplay =
+    user.unitSystem === 'imperial'
+      ? `${Math.round(user.heightCm * 0.393701)} in`
+      : `${user.heightCm} cm`;
 
   return (
     <header className="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
-          
-          {/* Left: Mobile Menu Button ONLY (App name and collapser are on the left sidebar panel) */}
+          {/* Left: Mobile Menu Button */}
           <div className="flex items-center">
             <button
               onClick={() => setIsMobileSidebarOpen(true)}
@@ -83,36 +84,45 @@ export const Navbar: React.FC = () => {
             </button>
           </div>
 
-          {/* Center: Primary Domain Switcher (Sports vs Fitness - Preserved as before) */}
+          {/* Center: Primary Mode Switcher (Social vs Personal) */}
           <div className="bg-slate-100 dark:bg-slate-800 p-1 sm:p-1.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-inner flex items-center">
             <button
               onClick={() => setMode('sports')}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer ${
                 mode === 'sports'
                   ? 'bg-white dark:bg-slate-900 text-purple-700 dark:text-purple-300 shadow-soft border border-purple-100 dark:border-purple-900/50 scale-[1.02]'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              <Trophy className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${mode === 'sports' ? 'text-purple-600 dark:text-purple-400' : 'text-slate-400'}`} />
-              <span>Sports Arena</span>
+              <Users
+                className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
+                  mode === 'sports'
+                    ? 'text-purple-600 dark:text-purple-400'
+                    : 'text-slate-400'
+                }`}
+              />
+              <span>Social</span>
             </button>
 
             <button
               onClick={() => setMode('fitness')}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer ${
                 mode === 'fitness'
                   ? 'bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 shadow-soft border border-rose-100 dark:border-rose-900/50 scale-[1.02]'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              <Dumbbell className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${mode === 'fitness' ? 'text-rose-500 dark:text-rose-400' : 'text-slate-400'}`} />
-              <span>Fitness & Wellness</span>
+              <Dumbbell
+                className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
+                  mode === 'fitness' ? 'text-rose-500 dark:text-rose-400' : 'text-slate-400'
+                }`}
+              />
+              <span>Personal</span>
             </button>
           </div>
 
           {/* Right: Passes, Streak & Profile with Flyout Menu */}
           <div className="flex items-center gap-2 sm:gap-3">
-            
             {/* Daily Streak Pill */}
             <div className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/60 text-orange-700 dark:text-orange-300 text-xs font-bold">
               <Flame className="w-3.5 h-3.5 text-orange-500" />
@@ -163,13 +173,16 @@ export const Navbar: React.FC = () => {
                     {user.role === 'trainer' ? 'Coach' : 'Athlete'}
                   </p>
                 </div>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isProfileMenuOpen ? 'rotate-180 text-purple-600' : ''}`} />
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
+                    isProfileMenuOpen ? 'rotate-180 text-purple-600' : ''
+                  }`}
+                />
               </button>
 
               {/* Profile Menu Popover */}
               {isProfileMenuOpen && (
                 <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white dark:bg-slate-900 rounded-3xl shadow-soft-xl border border-slate-200/90 dark:border-slate-800 p-3 space-y-3 z-50 animate-fadeIn">
-                  
                   {/* User Profile Card Header */}
                   <div className="p-3 bg-gradient-to-r from-purple-50 via-rose-50 to-indigo-50 dark:from-purple-950/40 dark:via-rose-950/30 dark:to-indigo-950/40 rounded-2xl border border-purple-100 dark:border-purple-900/40 space-y-2.5">
                     <div className="flex items-center gap-3">
@@ -183,11 +196,13 @@ export const Navbar: React.FC = () => {
                           <h4 className="text-sm font-extrabold text-slate-900 dark:text-white truncate">
                             {user.name}
                           </h4>
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                            user.role === 'trainer'
-                              ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
-                              : 'bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
-                          }`}>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              user.role === 'trainer'
+                                ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                                : 'bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
+                            }`}
+                          >
                             {user.role === 'trainer' ? 'Coach' : 'Athlete'}
                           </span>
                         </div>
@@ -198,7 +213,9 @@ export const Navbar: React.FC = () => {
                     </div>
 
                     <div className="flex items-center justify-between text-[11px] font-semibold text-slate-600 dark:text-slate-300 pt-1 border-t border-purple-100/80 dark:border-purple-900/40">
-                      <span>{weightDisplay} • {heightDisplay}</span>
+                      <span>
+                        {weightDisplay} • {heightDisplay}
+                      </span>
                       <span className="text-purple-600 dark:text-purple-400 font-bold capitalize">
                         {user.fitnessGoal ? user.fitnessGoal.replace('_', ' ') : 'General'}
                       </span>
@@ -207,16 +224,21 @@ export const Navbar: React.FC = () => {
 
                   {/* Options List */}
                   <div className="space-y-1">
-                    
                     {/* Theme Mode Toggle Row */}
                     <div className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors">
                       <div className="flex items-center gap-2.5">
-                        <div className={`p-2 rounded-xl ${
-                          theme === 'dark'
-                            ? 'bg-indigo-950/60 text-indigo-400 border border-indigo-900/50'
-                            : 'bg-amber-100/70 text-amber-600 border border-amber-200'
-                        }`}>
-                          {theme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+                        <div
+                          className={`p-2 rounded-xl ${
+                            theme === 'dark'
+                              ? 'bg-indigo-950/60 text-indigo-400 border border-indigo-900/50'
+                              : 'bg-amber-100/70 text-amber-600 border border-amber-200'
+                          }`}
+                        >
+                          {theme === 'dark' ? (
+                            <Moon className="w-4 h-4" />
+                          ) : (
+                            <Sun className="w-4 h-4" />
+                          )}
                         </div>
                         <div>
                           <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
@@ -232,7 +254,9 @@ export const Navbar: React.FC = () => {
                       <button
                         onClick={toggleTheme}
                         className={`w-12 h-6 flex items-center rounded-full p-0.5 transition-colors cursor-pointer ${
-                          theme === 'dark' ? 'bg-indigo-600 justify-end' : 'bg-slate-200 dark:bg-slate-700 justify-start'
+                          theme === 'dark'
+                            ? 'bg-indigo-600 justify-end'
+                            : 'bg-slate-200 dark:bg-slate-700 justify-start'
                         }`}
                         title="Switch theme"
                         aria-label="Toggle dark mode"
@@ -270,7 +294,9 @@ export const Navbar: React.FC = () => {
                     {/* Role Quick Toggle */}
                     <button
                       onClick={() => {
-                        updateUser({ role: user.role === 'athlete' ? 'trainer' : 'athlete' });
+                        updateUser({
+                          role: user.role === 'athlete' ? 'trainer' : 'athlete',
+                        });
                       }}
                       className="w-full flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors group text-left cursor-pointer"
                     >
@@ -283,7 +309,9 @@ export const Navbar: React.FC = () => {
                             Switch to {user.role === 'athlete' ? 'Coach' : 'Athlete'}
                           </p>
                           <p className="text-[10px] text-slate-400 dark:text-slate-500">
-                            {user.role === 'athlete' ? 'Access Coach Client HQ & Prescriptions' : 'Access Athlete Workout Splits & Check-in'}
+                            {user.role === 'athlete'
+                              ? 'Access Coach Client HQ & Prescriptions'
+                              : 'Access Athlete Workout Splits & Check-in'}
                           </p>
                         </div>
                       </div>
@@ -291,13 +319,10 @@ export const Navbar: React.FC = () => {
                         Toggle
                       </span>
                     </button>
-
                   </div>
-
                 </div>
               )}
             </div>
-
           </div>
         </div>
       </div>
