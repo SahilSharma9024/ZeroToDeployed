@@ -22,12 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# Database & Environment
-kinetix.db
-kinetix.db-*
-*.db
-*.sqlite
-.env
-.env.local
-

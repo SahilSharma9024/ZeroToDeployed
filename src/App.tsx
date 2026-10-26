@@ -6,7 +6,6 @@ import { Footer } from './components/common/Footer';
 import { AutoRegisterModal } from './components/common/AutoRegisterModal';
 import { QrPassModal } from './components/common/QrPassModal';
 import { ProfileModal } from './components/common/ProfileModal';
-import { AuthModal } from './components/common/AuthModal';
 import { VenueMap } from './components/common/VenueMap';
 
 // Feature Pages
@@ -100,7 +99,6 @@ const MainLayout: React.FC = () => {
       <AutoRegisterModal />
       <QrPassModal />
       <ProfileModal />
-      <AuthModal />
 
     </div>
   );
