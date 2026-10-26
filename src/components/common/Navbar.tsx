@@ -12,6 +12,10 @@ import {
   Sliders,
   Award,
   ArrowRight,
+  Shield,
+  LogOut,
+  KeyRound,
+  CheckCircle2,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -27,6 +31,9 @@ export const Navbar: React.FC = () => {
     theme,
     toggleTheme,
     setIsMobileSidebarOpen,
+    isAuthenticated,
+    setIsAuthModalOpen,
+    logout,
   } = useApp();
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -137,6 +144,19 @@ export const Navbar: React.FC = () => {
                 {passes.length}
               </span>
             </button>
+
+            {/* Auth Trigger Button */}
+            {!isAuthenticated ? (
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-bold transition-all shadow-soft hover:shadow-md cursor-pointer"
+                title="Authenticate with KinetiQ"
+              >
+                <KeyRound className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Sign In / Join</span>
+                <span className="sm:hidden">Login</span>
+              </button>
+            ) : null}
 
             {/* Profile Menu Trigger & Dropdown */}
             <div className="relative" ref={profileMenuRef}>
@@ -291,6 +311,52 @@ export const Navbar: React.FC = () => {
                         Toggle
                       </span>
                     </button>
+
+                    {/* Account / Auth Options */}
+                    <button
+                      onClick={() => {
+                        setIsProfileMenuOpen(false);
+                        setIsAuthModalOpen(true);
+                      }}
+                      className="w-full flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors group text-left cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-2 rounded-xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-900/60">
+                          <Shield className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                            {isAuthenticated ? 'Passport & KYC Security' : 'Sign In / Register'}
+                          </p>
+                          <p className="text-[10px] text-slate-400 dark:text-slate-500">
+                            {isAuthenticated ? 'Manage JWT session & verified role' : 'Login to sync data across devices'}
+                          </p>
+                        </div>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-all" />
+                    </button>
+
+                    {/* Sign Out (if authenticated) */}
+                    {isAuthenticated && (
+                      <button
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
+                          logout();
+                        }}
+                        className="w-full flex items-center justify-between p-2.5 rounded-2xl hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 transition-colors group text-left cursor-pointer border-t border-slate-100 dark:border-slate-800/80 pt-3"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div className="p-2 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60">
+                            <LogOut className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold">Sign Out</p>
+                            <p className="text-[10px] text-slate-400 dark:text-slate-500">End authenticated session</p>
+                          </div>
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-rose-600 transition-all" />
+                      </button>
+                    )}
 
                   </div>
 
