@@ -6,7 +6,6 @@ import { INITIAL_USER, INITIAL_PASSES } from '../data/initialUserData';
 import { INITIAL_EVENTS, INITIAL_TURFS, INITIAL_GHOST_SUBS, INITIAL_MATCH_REQUESTS } from '../data/sportsData';
 import { INITIAL_GYMS, INITIAL_CLIENTS, INITIAL_GYM_BUDDIES } from '../data/fitnessData';
 import confetti from 'canvas-confetti';
-import { authService } from '../services/authService';
 
 interface AutoRegisterTarget {
   id: string;
@@ -75,15 +74,6 @@ interface AppContextType {
   
   isProfileOpen: boolean;
   setIsProfileOpen: (open: boolean) => void;
-
-  // Authentication & Authorization (plan_app.md)
-  isAuthenticated: boolean;
-  token: string | null;
-  isAuthModalOpen: boolean;
-  setIsAuthModalOpen: (open: boolean) => void;
-  login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
-  register: (formData: any) => Promise<{ success: boolean; message?: string }>;
-  logout: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -152,71 +142,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [autoRegisterTarget, setAutoRegisterTarget] = useState<AutoRegisterTarget | null>(null);
   const [activeQrPass, setActiveQrPass] = useState<RegistrationPass | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-
-  // Auth State
-  const [token, setToken] = useState<string | null>(() => authService.getToken());
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => Boolean(authService.getToken()));
-
-  // Sync session on mount
-  useEffect(() => {
-    if (token) {
-      authService.getMe().then((res) => {
-        if (res.success && res.user) {
-          setUser(res.user);
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-          setToken(null);
-        }
-      });
-    }
-  }, []);
-
-  const login = async (email: string, password: string) => {
-    const res = await authService.login(email, password);
-    if (res.success && res.user) {
-      setUser(res.user);
-      const newToken = authService.getToken();
-      setToken(newToken);
-      setIsAuthenticated(true);
-      try {
-        confetti({
-          particleCount: 60,
-          spread: 70,
-          origin: { y: 0.6 },
-        });
-      } catch {}
-      return { success: true };
-    }
-    return { success: false, message: res.message };
-  };
-
-  const register = async (formData: any) => {
-    const res = await authService.register(formData);
-    if (res.success && res.user) {
-      setUser(res.user);
-      const newToken = authService.getToken();
-      setToken(newToken);
-      setIsAuthenticated(true);
-      try {
-        confetti({
-          particleCount: 70,
-          spread: 80,
-          origin: { y: 0.6 },
-        });
-      } catch {}
-      return { success: true };
-    }
-    return { success: false, message: res.message };
-  };
-
-  const logout = () => {
-    authService.clearToken();
-    setToken(null);
-    setIsAuthenticated(false);
-    setUser(INITIAL_USER);
-  };
 
   // Synchronize Dark Theme class on <html> document
   useEffect(() => {
@@ -249,9 +174,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateUser = (updated: Partial<UserProfile>) => {
     setUser((prev) => ({ ...prev, ...updated }));
-    if (isAuthenticated) {
-      authService.updateProfile(updated).catch((err) => console.warn('Could not sync profile to backend:', err));
-    }
   };
 
   // Streak Action
@@ -449,13 +371,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setActiveQrPass,
         isProfileOpen,
         setIsProfileOpen,
-        isAuthenticated,
-        token,
-        isAuthModalOpen,
-        setIsAuthModalOpen,
-        login,
-        register,
-        logout,
       }}
     >
       {children}
