@@ -97,3 +97,47 @@ export interface GymBuddyBeacon {
   lookingFor: string;
   contactHandle: string;
 }
+
+export interface BiometricsCalculationResult {
+  heightCm: number;
+  weightKg: number;
+  age: number;
+  gender: 'Male' | 'Female';
+  activityLevel: number;
+  bmi: number;
+  bmiPrime: number;
+  ponderalIndex: number;
+  bmiCategory: string;
+  bmiColor: string;
+  bmiBg: string;
+  bmiBorder: string;
+  healthyWeightMinKg: number;
+  healthyWeightMaxKg: number;
+  weightDiffKg: number;
+  weightStatus: 'under' | 'normal' | 'over';
+  bmrMifflin: number;
+  bmrHarrisBenedict: number;
+  bmrHourly: number;
+  tdee: number;
+  dailyWaterLiters: number;
+  dailyWaterOz: number;
+  dailyProteinMinG: number;
+  dailyProteinMaxG: number;
+  calorieGoals: {
+    maintenance: number;
+    fatLossMild: number;
+    fatLossStandard: number;
+    fatLossAggressive: number;
+    muscleGainLean: number;
+    muscleGainBulk: number;
+  };
+}
+
+export interface HealthCalculatorsProps {
+  initialHeightCm?: number;
+  initialWeightKg?: number;
+  initialAge?: number;
+  initialGender?: 'Male' | 'Female';
+  initialActivityLevel?: number;
+  onCalculated?: (results: BiometricsCalculationResult) => void;
+}
