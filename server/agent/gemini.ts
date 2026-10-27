@@ -15,7 +15,7 @@ export interface ChatMessage {
 
 /**
  * Generate sports-science reasoning via Google Gemini API.
- * Automatically tries active production models (gemini-2.5-flash, gemini-2.0-flash, gemini-1.5-flash).
+ * Automatically handles strict Gemini role-alternation rules, token limits, and candidate failovers.
  */
 export async function generateGeminiResponse(messages: ChatMessage[]): Promise<string | null> {
   const rawKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.VITE_GEMINI_API_KEY || '';
@@ -44,16 +44,56 @@ export async function generateGeminiResponse(messages: ChatMessage[]): Promise<s
   const systemMsg = messages.find((m) => m.role === 'system');
   const nonSystemMsgs = messages.filter((m) => m.role !== 'system');
 
-  const contents = nonSystemMsgs.map((m) => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }]
-  }));
+  // Gemini API strict turn rules:
+  // 1. Must start with a 'user' turn (cannot start with 'model')
+  // 2. Turns must strictly alternate between 'user' and 'model'
+  // 3. Must end with a 'user' turn
+  // 4. Parts must not be empty
+  const normalizedContents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string }> }> = [];
+
+  for (const m of nonSystemMsgs) {
+    const text = (m.content || '').trim();
+    if (!text) continue;
+
+    const role: 'user' | 'model' = m.role === 'assistant' ? 'model' : 'user';
+
+    // Discard leading 'model' turns (e.g. coach initial welcome greeting)
+    if (normalizedContents.length === 0 && role === 'model') {
+      continue;
+    }
+
+    const prev = normalizedContents[normalizedContents.length - 1];
+    if (prev && prev.role === role) {
+      // Merge consecutive same-role messages to guarantee strict alternation
+      prev.parts[0].text += `\n\n${text}`;
+    } else {
+      normalizedContents.push({
+        role,
+        parts: [{ text }]
+      });
+    }
+  }
+
+  // Ensure there is at least one turn and that it ends with the user message
+  if (normalizedContents.length === 0) {
+    const lastUser = nonSystemMsgs.filter((m) => m.role === 'user').pop();
+    normalizedContents.push({
+      role: 'user',
+      parts: [{ text: lastUser?.content || 'Hello Coach' }]
+    });
+  } else if (normalizedContents[normalizedContents.length - 1].role !== 'user') {
+    const lastUser = nonSystemMsgs.filter((m) => m.role === 'user').pop();
+    normalizedContents.push({
+      role: 'user',
+      parts: [{ text: lastUser?.content || 'Continue' }]
+    });
+  }
 
   const payload: any = {
-    contents,
+    contents: normalizedContents,
     generationConfig: {
       temperature: 0.4,
-      maxOutputTokens: 10000
+      maxOutputTokens: 4096 // Gemini standard production ceiling (avoids 400 error from >8192)
     }
   };
 
@@ -100,4 +140,3 @@ export async function generateGeminiResponse(messages: ChatMessage[]): Promise<s
 
   return null;
 }
-
