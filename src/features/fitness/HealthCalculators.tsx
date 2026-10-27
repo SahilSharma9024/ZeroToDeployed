@@ -316,7 +316,7 @@ export const HealthCalculators: React.FC = () => {
               Commit Health Metrics to SQLite Database
             </h4>
             <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-              Permanently stores your daily BMI ({bmi}), BMR ({bmr} kcal), and hydration target into kinetix.db.
+              Permanently stores your daily BMI ({bmi}), BMR ({bmr} kcal), and hydration target into KinetiQ.db.
             </p>
           </div>
         </div>
@@ -328,7 +328,7 @@ export const HealthCalculators: React.FC = () => {
           {logSaved ? (
             <>
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Saved to kinetix.db!</span>
+              <span>Saved to KinetiQ.db!</span>
             </>
           ) : (
             <>

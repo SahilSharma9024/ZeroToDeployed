@@ -43,8 +43,8 @@ export const AuthScreen: React.FC = () => {
         throw new Error(data.error || 'Login failed');
       }
 
-      localStorage.setItem('kinetix_token', data.token);
-      localStorage.setItem('kinetix_auth_user', JSON.stringify(data.user));
+      localStorage.setItem('KinetiQ_token', data.token);
+      localStorage.setItem('KinetiQ_auth_user', JSON.stringify(data.user));
       setAuthToken(data.token);
 
       updateUser({
@@ -87,8 +87,8 @@ export const AuthScreen: React.FC = () => {
         throw new Error(data.error || 'Registration failed');
       }
 
-      localStorage.setItem('kinetix_token', data.token);
-      localStorage.setItem('kinetix_auth_user', JSON.stringify(data.user));
+      localStorage.setItem('KinetiQ_token', data.token);
+      localStorage.setItem('KinetiQ_auth_user', JSON.stringify(data.user));
       setAuthToken(data.token);
 
       updateUser({
@@ -123,8 +123,8 @@ export const AuthScreen: React.FC = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: 'aarav@kinetix.io',
-          password: 'kinetix123',
+          email: 'aarav@KinetiQ.io',
+          password: 'KinetiQ123',
         }),
       });
 
@@ -133,8 +133,8 @@ export const AuthScreen: React.FC = () => {
         throw new Error(data.error || 'Demo login failed');
       }
 
-      localStorage.setItem('kinetix_token', data.token);
-      localStorage.setItem('kinetix_auth_user', JSON.stringify(data.user));
+      localStorage.setItem('KinetiQ_token', data.token);
+      localStorage.setItem('KinetiQ_auth_user', JSON.stringify(data.user));
       setAuthToken(data.token);
 
       updateUser({
@@ -174,7 +174,7 @@ export const AuthScreen: React.FC = () => {
             <Dumbbell className="w-7 h-7 text-white" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center justify-center gap-2">
-            <span>KINETIX</span>
+            <span>KinetiQ</span>
             <span className="text-xs font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40">
               Sports & Fitness OS
             </span>
@@ -272,7 +272,7 @@ export const AuthScreen: React.FC = () => {
                   <input
                     type="email"
                     required
-                    placeholder="athlete@kinetix.io"
+                    placeholder="athlete@KinetiQ.io"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-white text-xs focus:outline-none focus:border-purple-500"
@@ -417,7 +417,7 @@ export const AuthScreen: React.FC = () => {
                 <input
                   type="email"
                   required
-                  placeholder="athlete@kinetix.io"
+                  placeholder="athlete@KinetiQ.io"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-white text-xs focus:outline-none focus:border-purple-500"

@@ -61,6 +61,6 @@ Prescription:
   }
 
   return `[Hindsight Memory Engine Active]
-Based on your persistent biometric profile in KINETIX, your program is calibrated for progressive hypertrophy with zero-compromise joint safety. Let me know if you would like me to generate your full memory-protected split or adjust macro targets.`;
+Based on your persistent biometric profile in KinetiQ, your program is calibrated for progressive hypertrophy with zero-compromise joint safety. Let me know if you would like me to generate your full memory-protected split or adjust macro targets.`;
 }
 

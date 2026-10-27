@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'kinetix-app',
+      name: 'KinetiQ-app',
       script: 'node_modules/tsx/dist/cli.mjs',
       args: 'server/index.ts',
       instances: 1,

@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const dbPath = path.resolve(__dirname, '..', 'kinetix.db');
+const dbPath = path.resolve(__dirname, '..', 'KinetiQ.db');
 export const db = new DatabaseSync(dbPath);
 
 // Enable Write-Ahead Logging for high-concurrency read/writes
@@ -109,7 +109,7 @@ const checkUserStmt = db.prepare('SELECT id FROM users WHERE id = ?');
 const defaultUser = checkUserStmt.get('usr-aarav-demo');
 
 if (!defaultUser) {
-  // bcrypt hash for 'kinetix123'
+  // bcrypt hash for 'KinetiQ123'
   const defaultHash = '$2a$10$wT0lPZp07fQh2Zz7jL5fbeoK629.yY9KSm3y1kK2uEw9zE0Gk8t3K';
   const insertUser = db.prepare(`
     INSERT INTO users (
@@ -118,7 +118,7 @@ if (!defaultUser) {
   `);
   insertUser.run(
     'usr-aarav-demo',
-    'aarav@kinetix.io',
+    'aarav@KinetiQ.io',
     defaultHash,
     'Aarav Sharma',
     '+91 98765 43210',

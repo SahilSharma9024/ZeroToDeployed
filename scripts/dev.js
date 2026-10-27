@@ -6,7 +6,7 @@ import path from 'node:path';
 const projectRoot = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 
 console.log('==================================================================');
-console.log('⚡ Starting KINETIX Full-Stack OS (Backend API + Vite Frontend)...');
+console.log('⚡ Starting KinetiQ Full-Stack OS (Backend API + Vite Frontend)...');
 console.log(`📁 Project Directory: ${projectRoot}`);
 console.log('==================================================================');
 
@@ -28,7 +28,7 @@ const vite = spawn(npxCmd, ['vite'], {
 });
 
 function cleanup() {
-  console.log('\n🛑 Shutting down KINETIX services...');
+  console.log('\n🛑 Shutting down KinetiQ services...');
   server.kill('SIGTERM');
   vite.kill('SIGTERM');
   process.exit(0);

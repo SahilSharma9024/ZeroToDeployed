@@ -54,7 +54,7 @@ export async function runCoachAgent(
     guardrailsTriggered.push('DAIRY_WHEY_ELIMINATION_PROTOCOL');
   }
 
-  const systemPrompt = `You are KINETIX AI Coach, an elite sports science and strength conditioning trainer powered by Vectorize Hindsight persistent memory.
+  const systemPrompt = `You are KinetiQ AI Coach, an elite sports science and strength conditioning trainer powered by Vectorize Hindsight persistent memory.
 You are coaching athlete ${user?.name || 'Athlete'} (Age: ${user?.age || 24}, Height: ${user?.height_cm || 178}cm, Weight: ${user?.weight_kg || 74}kg, Goal: ${user?.fitness_goal || 'Hypertrophy'}).
 
 CRITICAL SAFETY DIRECTIVE:

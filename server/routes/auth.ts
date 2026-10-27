@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { db } from '../db.js';
 
 export const authRouter = Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'kinetix_super_secret_jwt_2026_sports_os';
+const JWT_SECRET = process.env.JWT_SECRET || 'KinetiQ_super_secret_jwt_2026_sports_os';
 
 // Register New Athlete / Coach
 authRouter.post('/register', async (req: Request, res: Response): Promise<void> => {

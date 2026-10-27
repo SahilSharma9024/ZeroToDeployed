@@ -1,6 +1,6 @@
-# 🚀 KINETIX — AWS Linux Deployment & Production Hosting Guide
+# 🚀 KinetiQ — AWS Linux Deployment & Production Hosting Guide
 
-This guide details how to host KINETIX on your AWS Linux EC2 instance on **Port 80** with 24/7 background uptime, native SQLite, OpenStreetMap geocoding, and HindSight AI persistent memory.
+This guide details how to host KinetiQ on your AWS Linux EC2 instance on **Port 80** with 24/7 background uptime, native SQLite, OpenStreetMap geocoding, and HindSight AI persistent memory.
 
 ---
 
@@ -39,8 +39,8 @@ sudo npm install -g pm2
 ### Step 2.2: Clone or Pull the `feature/13-HindSight` Branch
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/ZeroToDeployed.git kinetix
-cd kinetix
+git clone https://github.com/your-org/ZeroToDeployed.git KinetiQ
+cd KinetiQ
 
 # Switch to the active development branch
 git checkout feature/13-HindSight
@@ -68,7 +68,7 @@ PORT=80
 NODE_ENV=production
 
 # JWT Authentication Secret
-JWT_SECRET=kinetix_super_secret_jwt_2026_sports_os
+JWT_SECRET=KinetiQ_super_secret_jwt_2026_sports_os
 
 # Groq LLM Inference (Free at console.groq.com)
 GROQ_API_KEY=gsk_...
@@ -101,7 +101,7 @@ pm2 startup
 ### Check Logs & Status:
 ```bash
 pm2 status
-pm2 logs kinetix-app
+pm2 logs KinetiQ-app
 ```
 
 ---

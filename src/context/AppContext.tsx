@@ -97,7 +97,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Authentication State
   const [authToken, setAuthToken] = useState<string | null>(() => {
-    return localStorage.getItem('kinetix_token');
+    return localStorage.getItem('KinetiQ_token');
   });
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
@@ -135,7 +135,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Sync auth profile on mount
   useEffect(() => {
-    const token = localStorage.getItem('kinetix_token');
+    const token = localStorage.getItem('KinetiQ_token');
     if (token) {
       fetch('/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` }
@@ -164,8 +164,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [authToken]);
 
   const logout = () => {
-    localStorage.removeItem('kinetix_token');
-    localStorage.removeItem('kinetix_auth_user');
+    localStorage.removeItem('KinetiQ_token');
+    localStorage.removeItem('KinetiQ_auth_user');
     setAuthToken(null);
     setUser(INITIAL_USER);
   };

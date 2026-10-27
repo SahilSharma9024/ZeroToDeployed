@@ -122,7 +122,7 @@ venuesRouter.get('/', async (req: Request, res: Response): Promise<void> => {
       venues: formatted,
       meta: {
         total: formatted.length,
-        source: 'OpenStreetMap & Kinetix Local SQLite Engine',
+        source: 'OpenStreetMap & KinetiQ Local SQLite Engine',
         queriedCoords: { lat, lon }
       }
     });

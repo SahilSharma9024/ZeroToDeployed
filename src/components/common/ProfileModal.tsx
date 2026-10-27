@@ -149,7 +149,7 @@ export const ProfileModal: React.FC = () => {
     });
 
     // Sync to SQLite backend in background
-    const token = localStorage.getItem('kinetix_token');
+    const token = localStorage.getItem('KinetiQ_token');
     if (token) {
       fetch('/api/auth/profile', {
         method: 'PUT',

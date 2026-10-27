@@ -53,7 +53,7 @@ export const AiPersonalTrainer: React.FC = () => {
     {
       id: 'init-1',
       sender: 'coach',
-      text: `Hello ${user.name}! I am your KINETIX AI Coach. I've initialized your session with Vectorize Hindsight persistent memory. I have your active injury safeguards and nutritional protocols loaded into memory. How can I optimize your training today?`,
+      text: `Hello ${user.name}! I am your KinetiQ AI Coach. I've initialized your session with Vectorize Hindsight persistent memory. I have your active injury safeguards and nutritional protocols loaded into memory. How can I optimize your training today?`,
       time: 'Just now',
       guardrails: ['ROTATOR_CUFF_OVERHEAD_RESTRICTION', 'DAIRY_WHEY_ELIMINATION_PROTOCOL'],
     },
@@ -252,7 +252,7 @@ export const AiPersonalTrainer: React.FC = () => {
             AI Personal Trainer with Persistent Memory
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-            Unlike standard stateless chatbots that forget your injuries after every refresh, KINETIX uses <strong>HindSight</strong> to permanently retain your physical constraints, past milestones, and digestive intolerances across sessions.
+            Unlike standard stateless chatbots that forget your injuries after every refresh, KinetiQ uses <strong>HindSight</strong> to permanently retain your physical constraints, past milestones, and digestive intolerances across sessions.
           </p>
         </div>
 
@@ -422,7 +422,7 @@ export const AiPersonalTrainer: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                  <span>KINETIX HindSight AI Coach</span>
+                  <span>KinetiQ HindSight AI Coach</span>
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 </h3>
                 <p className="text-[10px] text-slate-500 dark:text-slate-400">

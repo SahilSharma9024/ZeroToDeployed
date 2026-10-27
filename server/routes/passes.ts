@@ -28,7 +28,7 @@ passesRouter.post('/issue', (req: Request, res: Response): void => {
     const ticketCode = `KTX-2026-${cityCode}-${randomHex}`;
 
     // Cryptographic signature for tamper-proof gate check-in
-    const secret = process.env.JWT_SECRET || 'kinetix_pass_secret';
+    const secret = process.env.JWT_SECRET || 'KinetiQ_pass_secret';
     const qrSignature = crypto
       .createHmac('sha256', secret)
       .update(`${ticketCode}:${userId}:${eventDate}`)
