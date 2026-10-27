@@ -76,7 +76,7 @@ export const Logo: React.FC<LogoProps> = ({
             KinetiQ
           </h1>
           <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest truncate">
-            Sports & Fitness OS
+            Sports & Fitness
           </p>
         </div>
       )}

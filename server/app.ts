@@ -32,7 +32,7 @@ app.use(express.json());
 app.get('/api/health-check', (_req: Request, res: Response) => {
   res.json({
     status: 'online',
-    app: 'KinetiQ Sports & Fitness OS',
+    app: 'KinetiQ Sports & Fitness',
     version: '2.0.0-production',
     database: 'SQLite (Native WAL Mode)',
     memoryEngine: 'Hindsight by Vectorize',

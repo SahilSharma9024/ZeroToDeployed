@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 .env
+KinetiQ.db
+KinetiQ.db-shm
+KinetiQ.db-wal

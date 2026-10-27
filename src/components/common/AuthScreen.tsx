@@ -176,7 +176,7 @@ export const AuthScreen: React.FC = () => {
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center justify-center gap-2">
             <span>KinetiQ</span>
             <span className="text-xs font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40">
-              Sports & Fitness OS
+              Sports & Fitness
             </span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
@@ -396,7 +396,7 @@ export const AuthScreen: React.FC = () => {
               ) : (
                 <>
                   <ShieldCheck className="w-4 h-4" />
-                  <span>Create Account & Unlock OS</span>
+                  <span>Create Account & Unlock</span>
                 </>
               )}
             </button>
