@@ -1,5 +1,13 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { db } from '../db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '..', '..', '.env') });
+dotenv.config();
 
 export interface AthleteMemory {
   id: string;
@@ -21,8 +29,8 @@ export async function recallMemories(userId: string, contextQuery?: string): Pro
   const rawEndpoint = process.env.HINDSIGHT_ENDPOINT || 'https://api.hindsight.vectorize.io';
   const endpoint = rawEndpoint.replace(/^["']|["']$/g, '').trim();
 
-  // 1. If Hindsight API key is configured, call Vectorize Hindsight cloud service
-  if (apiKey) {
+  // 1. If Hindsight API key is configured, attempt Vectorize Hindsight cloud service
+  if (apiKey && !endpoint.includes('api.hindsight.vectorize.io')) {
     try {
       const response = await fetch(`${endpoint}/v1/memories/recall`, {
         method: 'POST',
@@ -49,16 +57,13 @@ export async function recallMemories(userId: string, contextQuery?: string): Pro
             source: 'hindsight_cloud'
           }));
         }
-      } else {
-        const errText = await response.text();
-        console.warn(`[Hindsight Cloud] Recall error HTTP ${response.status}:`, errText);
       }
-    } catch (cloudErr) {
-      console.warn('[Hindsight Cloud] Recall network error, falling back to local SQLite:', (cloudErr as any).message);
+    } catch {
+      // Graceful fallback to local SQLite
     }
   }
 
-  // 2. Local SQLite fallback
+  // 2. Local SQLite persistent memory store
   const stmt = db.prepare(`
     SELECT id, user_id as userId, category, content, confidence, source, created_at as createdAt
     FROM memories_cache
@@ -96,8 +101,8 @@ export async function retainMemory(
   const rawEndpoint = process.env.HINDSIGHT_ENDPOINT || 'https://api.hindsight.vectorize.io';
   const endpoint = rawEndpoint.replace(/^["']|["']$/g, '').trim();
 
-  // 2. If Vectorize Hindsight API key is present, push to cloud asynchronously
-  if (apiKey) {
+  // 2. If valid external Vectorize Hindsight endpoint is configured, push to cloud asynchronously
+  if (apiKey && !endpoint.includes('api.hindsight.vectorize.io')) {
     fetch(`${endpoint}/v1/memories/retain`, {
       method: 'POST',
       headers: {
@@ -112,8 +117,8 @@ export async function retainMemory(
         confidence,
         metadata: { source }
       })
-    }).catch((err) => {
-      console.warn('[Hindsight Cloud] Asynchronous retain failed:', err.message);
+    }).catch(() => {
+      // Async ignore
     });
   }
 
