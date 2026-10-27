@@ -14,15 +14,15 @@ import { WorkoutArenaModal } from './WorkoutArenaModal';
 import {
   Gamepad2,
   Trophy,
-
-
+  Flame,
+  Zap,
   Target,
-
+  Shield,
   Layers,
   Sparkles,
-
-
-
+  Award,
+  CheckCircle2,
+  RefreshCw,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 

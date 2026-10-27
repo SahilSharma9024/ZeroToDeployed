@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ActivePage } from '../../types';
 import {
+  Home,
   Trophy,
   MapPin,
   Map,
@@ -13,6 +14,8 @@ import {
   Bot,
   Video,
   X,
+  Compass,
+  CalendarCheck,
   PanelLeftClose,
   PanelLeftOpen,
   Gamepad2,
@@ -24,6 +27,7 @@ export const Sidebar: React.FC = () => {
     mode,
     activePage,
     setActivePage,
+    user,
     passes,
     ghostSubs,
     gymBuddies,
@@ -32,14 +36,6 @@ export const Sidebar: React.FC = () => {
     isSidebarCollapsed,
     toggleSidebarCollapse,
   } = useApp();
-
-  // Resizable sidebar width with local persistence
-  const [sidebarWidth, setSidebarWidth] = useState<number>(() => {
-    const saved = localStorage.getItem('KinetiQ_sidebar_width');
-    const parsed = saved ? parseInt(saved, 10) : 288;
-    return !isNaN(parsed) && parsed >= 240 && parsed <= 460 ? parsed : 288;
-  });
-  const [isResizing, setIsResizing] = useState(false);
 
   // Keyboard shortcut Ctrl+B / Cmd+B to toggle sidebar collapse
   useEffect(() => {
@@ -52,10 +48,6 @@ export const Sidebar: React.FC = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [toggleSidebarCollapse]);
-
-  useEffect(() => {
-    localStorage.setItem('KinetiQ_sidebar_width', sidebarWidth.toString());
-  }, [sidebarWidth]);
 
   const handleNav = (page: ActivePage) => {
     setActivePage(page);
@@ -121,14 +113,6 @@ export const Sidebar: React.FC = () => {
       bg: 'bg-rose-50 dark:bg-rose-950/60',
     },
     {
-      id: 'fitness-buddy' as ActivePage,
-      label: 'Motivation Buddy',
-      icon: Users,
-      badge: `${gymBuddies.length} Live`,
-      color: 'text-orange-600 dark:text-orange-400',
-      bg: 'bg-orange-50 dark:bg-orange-950/60',
-    },
-    {
       id: 'sports-passes' as ActivePage,
       label: 'My Sports Passes',
       icon: Ticket,
@@ -145,7 +129,7 @@ export const Sidebar: React.FC = () => {
       label: 'Virtual Gym',
       icon: Gamepad2,
       badge: '🎮 3D Avatar',
-      badgeColor: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-sm',
+      badgeColor: 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-sm',
       color: 'text-fuchsia-600 dark:text-fuchsia-400',
       bg: 'bg-fuchsia-50 dark:bg-fuchsia-950/60',
     },
@@ -157,6 +141,14 @@ export const Sidebar: React.FC = () => {
       color: 'text-blue-600 dark:text-blue-400',
       bg: 'bg-blue-50 dark:bg-blue-950/60',
     },
+    // {
+    //   id: 'fitness-map' as ActivePage,
+    //   label: 'Interactive Gym Map',
+    //   icon: Map,
+    //   highlight: true,
+    //   color: 'text-teal-600 dark:text-teal-400',
+    //   bg: 'bg-teal-50 dark:bg-teal-950/60',
+    // },
     {
       id: 'fitness-calculators' as ActivePage,
       label: 'BMI & BMR Suite',
@@ -173,6 +165,21 @@ export const Sidebar: React.FC = () => {
       color: 'text-violet-600 dark:text-violet-400',
       bg: 'bg-violet-50 dark:bg-violet-950/60',
     },
+    // {
+    //   id: 'fitness-portal' as ActivePage,
+    //   label: user.role === 'trainer' ? 'Coach Client HQ' : 'My Workout & Meals',
+    //   icon: CalendarCheck,
+    //   color: 'text-emerald-600 dark:text-emerald-400',
+    //   bg: 'bg-emerald-50 dark:bg-emerald-950/60',
+    // },
+    {
+      id: 'fitness-buddy' as ActivePage,
+      label: 'Motivation Buddy',
+      icon: Users,
+      badge: `${gymBuddies.length} Live`,
+      color: 'text-orange-600 dark:text-orange-400',
+      bg: 'bg-orange-50 dark:bg-orange-950/60',
+    },
     {
       id: 'fitness-exercises' as ActivePage,
       label: 'Video Academy',
@@ -180,6 +187,14 @@ export const Sidebar: React.FC = () => {
       color: 'text-rose-600 dark:text-rose-400',
       bg: 'bg-rose-50 dark:bg-rose-950/60',
     },
+    // {
+    //   id: 'fitness-passes' as ActivePage,
+    //   label: 'My Free Trial Passes',
+    //   icon: Ticket,
+    //   badge: `${passes.filter((p) => p.type === 'gym_pass').length}`,
+    //   color: 'text-indigo-600 dark:text-indigo-400',
+    //   bg: 'bg-indigo-50 dark:bg-indigo-950/60',
+    // },
   ];
 
   // Dynamic navigation switching based on navbar selection (Social vs Personal)
@@ -195,24 +210,18 @@ export const Sidebar: React.FC = () => {
         />
       )}
 
-      {/* Sidebar Container: Resizable on desktop, fixed slide-over drawer on mobile */}
+      {/* Sidebar Container: Fixed to viewport height, doesn't scroll with main content */}
       <aside
-        style={{
-          width: isSidebarCollapsed ? undefined : `${sidebarWidth}px`,
-        }}
-        className={`fixed top-0 bottom-0 left-0 z-50 bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 flex flex-col justify-between lg:static lg:h-screen lg:shrink-0 relative ${
-          isResizing ? 'transition-none select-none' : 'transition-all duration-200 ease-in-out'
-        } ${
+        className={`fixed top-0 bottom-0 left-0 z-50 bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 flex flex-col justify-between transition-all duration-300 ease-in-out lg:static lg:h-screen lg:shrink-0 ${
           isMobileSidebarOpen ? 'translate-x-0 w-72' : '-translate-x-full lg:translate-x-0'
-        } ${isSidebarCollapsed ? 'lg:w-20' : ''}`}
+        } ${isSidebarCollapsed ? 'lg:w-20' : 'lg:w-72'} w-72`}
       >
         <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden no-scrollbar">
+          
           {/* Top Brand & Collapse/Close Actions */}
-          <div
-            className={`p-4 border-b border-slate-100 dark:border-slate-800 flex items-center ${
-              isSidebarCollapsed ? 'lg:justify-center' : 'justify-between'
-            }`}
-          >
+          <div className={`p-4 border-b border-slate-100 dark:border-slate-800 flex items-center ${
+            isSidebarCollapsed ? 'lg:justify-center' : 'justify-between'
+          }`}>
             {!isSidebarCollapsed ? (
               <>
                 <button
@@ -369,19 +378,8 @@ export const Sidebar: React.FC = () => {
               );
             })}
           </div>
-        </div>
 
-        {/* Draggable Resize Handle along inner edge (Desktop only) */}
-        {!isSidebarCollapsed && (
-          <div
-            onPointerDown={handleResizeStart}
-            className="hidden lg:flex absolute top-0 right-0 bottom-0 w-3 -mr-1.5 z-40 cursor-col-resize items-center justify-center select-none touch-none group hover:bg-purple-500/10 active:bg-purple-500/20 transition-colors"
-            title="Drag to resize sidebar width"
-            aria-label="Resize sidebar width"
-          >
-            <div className="w-1 h-12 mx-auto rounded-full bg-slate-300 dark:bg-slate-700 group-hover:bg-purple-500 group-hover:h-20 group-hover:w-1.5 active:bg-purple-600 transition-all shadow-sm" />
-          </div>
-        )}
+        </div>
       </aside>
     </>
   );
