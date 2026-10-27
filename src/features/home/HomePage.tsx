@@ -128,7 +128,7 @@ export const HomePage: React.FC = () => {
             <button
               onClick={() => {
                 setMode('sports');
-                setActivePage('sports-overview');
+                setActivePage('sports-events');
               }}
               className="flex items-center gap-1 text-xs font-bold text-purple-600 dark:text-purple-400 hover:underline"
             >
@@ -255,7 +255,7 @@ export const HomePage: React.FC = () => {
             <button
               onClick={() => {
                 setMode('fitness');
-                setActivePage('fitness-overview');
+                setActivePage('virtual-gym');
               }}
               className="flex items-center gap-1 text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline"
             >

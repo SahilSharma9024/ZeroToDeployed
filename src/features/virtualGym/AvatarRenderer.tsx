@@ -68,8 +68,8 @@ export const AvatarRenderer: React.FC<AvatarRendererProps> = ({
     const limbThickness = (0.095 + bmiFactor * 0.035) * (isHeroic ? 1.14 : 1.0);
 
     // Three.js Scene Setup
-    const width = container.clientWidth || 300;
-    const height = container.clientHeight || 360;
+    const width = container.clientWidth || 400;
+    const height = container.clientHeight || 460;
 
     let renderer: THREE.WebGLRenderer;
     try {

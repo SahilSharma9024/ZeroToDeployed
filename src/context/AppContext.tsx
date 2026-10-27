@@ -161,7 +161,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setMode = (newMode: AppMode) => {
     setModeState(newMode);
     // When switching mode, change active page to that mode's overview
-    setActivePage(newMode === 'sports' ? 'sports-overview' : 'fitness-overview');
+    setActivePage(newMode === 'sports' ? 'sports-events' : 'virtual-gym');
   };
 
   useEffect(() => {

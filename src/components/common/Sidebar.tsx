@@ -54,23 +54,32 @@ export const Sidebar: React.FC = () => {
     setIsMobileSidebarOpen(false);
   };
 
-  const sportsNav = [
-    // {
-    //   id: 'sports-overview' as ActivePage,
-    //   label: 'Sports Overview',
-    //   icon: Compass,
-    //   color: 'text-indigo-600 dark:text-indigo-400',
-    //   bg: 'bg-indigo-50 dark:bg-indigo-950/60',
-    // },
-    {
-      id: 'virtual-gym' as ActivePage,
-      label: 'Virtual Gym',
-      icon: Gamepad2,
-      // badge: '🎮 3D RPG',
-      badgeColor: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-sm',
-      color: 'text-fuchsia-600 dark:text-fuchsia-400',
-      bg: 'bg-fuchsia-50 dark:bg-fuchsia-950/60',
-    },
+  // Draggable resize handler
+  const handleResizeStart = (e: React.PointerEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+
+    const handlePointerMove = (moveEvent: PointerEvent) => {
+      const newWidth = Math.min(Math.max(moveEvent.clientX, 240), 460);
+      setSidebarWidth(newWidth);
+    };
+
+    const handlePointerUp = () => {
+      setIsResizing(false);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+  };
+
+  // Social Community Navigation Items (Active when Social is selected in Navbar)
+  const socialNav = [
     {
       id: 'sports-events' as ActivePage,
       label: 'Tournaments & Events',
@@ -113,14 +122,8 @@ export const Sidebar: React.FC = () => {
     },
   ];
 
-  const fitnessNav = [
-    // {
-    //   id: 'fitness-overview' as ActivePage,
-    //   label: 'Fitness Overview',
-    //   icon: Compass,
-    //   color: 'text-purple-600 dark:text-purple-400',
-    //   bg: 'bg-purple-50 dark:bg-purple-950/60',
-    // },
+  // Personal Fitness & Individual Training Items (Active when Personal is selected in Navbar)
+  const personalNav = [
     {
       id: 'virtual-gym' as ActivePage,
       label: 'Virtual Gym',
@@ -194,7 +197,8 @@ export const Sidebar: React.FC = () => {
     // },
   ];
 
-  const currentNav = mode === 'sports' ? sportsNav : fitnessNav;
+  // Dynamic navigation switching based on navbar selection (Social vs Personal)
+  const currentNav = mode === 'sports' ? socialNav : personalNav;
 
   return (
     <>
@@ -233,7 +237,7 @@ export const Sidebar: React.FC = () => {
                       KinetiQ
                     </h1>
                     <p className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest truncate">
-                      Sports & Fitness OS
+                      
                     </p>
                   </div>
                 </button>
@@ -283,86 +287,44 @@ export const Sidebar: React.FC = () => {
             )}
           </div>
 
-          {/* Mode Indicator Pill */}
-          <div className="p-3 border-b border-slate-100 dark:border-slate-800/80">
+          {/* Navigation Category Container (Changes dynamically when switching Social/Personal in navbar) */}
+          <div
+            className={`p-3 space-y-1.5 flex-1 ${
+              isSidebarCollapsed ? 'flex flex-col items-center' : ''
+            }`}
+          >
+            {/* Category Header */}
             {!isSidebarCollapsed ? (
-              <div className={`p-2.5 rounded-2xl border transition-colors ${
-                mode === 'sports'
-                  ? 'bg-purple-50/80 dark:bg-purple-950/30 border-purple-200/60 dark:border-purple-800/40'
-                  : 'bg-rose-50/80 dark:bg-rose-950/30 border-rose-200/60 dark:border-rose-800/40'
-              }`}>
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    Active Domain
-                  </span>
-                  <span className={`w-2 h-2 rounded-full animate-ping ${
-                    mode === 'sports' ? 'bg-purple-500' : 'bg-rose-500'
-                  }`} />
-                </div>
-                <p className={`text-xs font-extrabold mt-0.5 ${
-                  mode === 'sports' ? 'text-purple-700 dark:text-purple-300' : 'text-rose-600 dark:text-rose-300'
-                }`}>
-                  {mode === 'sports' ? '⚽ Sports & Turf Network' : '🏋️ Fitness & Wellness Suite'}
-                </p>
-              </div>
-            ) : (
-              <div
-                className={`p-2 rounded-2xl border flex flex-col items-center justify-center transition-colors ${
-                  mode === 'sports'
-                    ? 'bg-purple-50/80 dark:bg-purple-950/30 border-purple-200/60 dark:border-purple-800/40 text-purple-700 dark:text-purple-300'
-                    : 'bg-rose-50/80 dark:bg-rose-950/30 border-rose-200/60 dark:border-rose-800/40 text-rose-600 dark:text-rose-300'
-                }`}
-                title={mode === 'sports' ? 'Active: Sports & Turf Network' : 'Active: Fitness & Wellness Suite'}
-              >
-                <span className={`w-2 h-2 rounded-full ${
-                  mode === 'sports' ? 'bg-purple-500 animate-pulse' : 'bg-rose-500 animate-pulse'
-                }`} />
-              </div>
-            )}
-          </div>
-
-          {/* Navigation Links with Colorful Logos & Icons */}
-          <div className={`p-3 space-y-1.5 flex-1 ${isSidebarCollapsed ? 'flex flex-col items-center' : ''}`}>
-            
-            {/* Global Home Link */}
-            <button
-              onClick={() => handleNav('home')}
-              title="Global Dashboard"
-              className={`w-full flex items-center ${
-                isSidebarCollapsed ? 'justify-center p-2 w-11 h-11' : 'justify-between px-3 py-2'
-              } rounded-2xl text-xs font-bold transition-all cursor-pointer ${
-                activePage === 'home'
-                  ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/40 shadow-sm'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform ${
-                  activePage === 'home'
-                    ? 'bg-purple-600 text-white shadow-soft scale-105'
-                    : 'bg-violet-100 dark:bg-violet-950/60 text-violet-600 dark:text-violet-400'
-                }`}>
-                  <Home className="w-4 h-4" />
-                </div>
-                {!isSidebarCollapsed && <span>Global Dashboard</span>}
-              </div>
-            </button>
-
-            {/* Section Divider or Label */}
-            {!isSidebarCollapsed ? (
-              <div className="pt-2 pb-0.5">
-                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-3">
-                  {mode === 'sports' ? 'Sports Navigation' : 'Fitness Navigation'}
+              <div className="pt-2 pb-1.5 px-3 flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  {mode === 'sports' ? 'Social Navigation' : 'Personal Navigation'}
+                </span>
+                <span
+                  className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full border ${
+                    mode === 'sports'
+                      ? 'text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 border-purple-200/50 dark:border-purple-800/40'
+                      : 'text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 border-rose-200/50 dark:border-rose-800/40'
+                  }`}
+                >
+                  {mode === 'sports' ? 'Social' : 'Personal'}
                 </span>
               </div>
             ) : (
-              <div className="w-8 h-px bg-slate-200 dark:bg-slate-800 my-1.5" />
+              <div
+                className="w-8 h-px bg-slate-200 dark:bg-slate-800 my-2 mx-auto"
+                title={mode === 'sports' ? 'Social Navigation' : 'Personal Navigation'}
+              />
             )}
 
-            {/* Dynamic Section Links with Colorful Icons */}
+            {/* Active Items */}
             {currentNav.map((item) => {
               const Icon = item.icon;
               const isActive = activePage === item.id;
+              const activeStyle =
+                mode === 'sports'
+                  ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/40'
+                  : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800/40';
+              const activeIconBg = mode === 'sports' ? 'bg-purple-600' : 'bg-rose-600';
 
               return (
                 <button
@@ -370,40 +332,48 @@ export const Sidebar: React.FC = () => {
                   onClick={() => handleNav(item.id)}
                   title={item.label}
                   className={`w-full flex items-center ${
-                    isSidebarCollapsed ? 'justify-center p-2 w-11 h-11 relative' : 'justify-between px-3 py-2'
+                    isSidebarCollapsed
+                      ? 'justify-center p-2 w-11 h-11 relative'
+                      : 'justify-between px-3 py-2'
                   } rounded-2xl text-xs font-bold transition-all cursor-pointer ${
                     isActive
-                      ? mode === 'sports'
-                        ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/40 shadow-sm'
-                        : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800/40 shadow-sm'
+                      ? `${activeStyle} shadow-sm`
                       : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform ${
-                      isActive
-                        ? mode === 'sports'
-                          ? 'bg-purple-600 text-white shadow-soft scale-105'
-                          : 'bg-rose-600 text-white shadow-soft scale-105'
-                        : `${item.bg} ${item.color}`
-                    }`}>
+                    <div
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform ${
+                        isActive
+                          ? `${activeIconBg} text-white shadow-soft scale-105`
+                          : `${item.bg} ${item.color}`
+                      }`}
+                    >
                       <Icon className="w-4 h-4" />
                     </div>
-                    {!isSidebarCollapsed && <span className="truncate">{item.label}</span>}
+                    {!isSidebarCollapsed && (
+                      <span className="truncate">{item.label}</span>
+                    )}
                   </div>
 
                   {/* Badge */}
-                  {item.badge && (
-                    !isSidebarCollapsed ? (
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold flex-shrink-0 ${
-                        item.badgeColor || 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                      }`}>
+                  {item.badge &&
+                    (!isSidebarCollapsed ? (
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold flex-shrink-0 ${
+                          item.badgeColor ||
+                          'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                        }`}
+                      >
                         {item.badge}
                       </span>
                     ) : (
-                      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-900" />
-                    )
-                  )}
+                      <span
+                        className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full ${
+                          mode === 'sports' ? 'bg-purple-500' : 'bg-rose-500'
+                        } ring-2 ring-white dark:ring-slate-900`}
+                      />
+                    ))}
                 </button>
               );
             })}
