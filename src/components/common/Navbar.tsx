@@ -73,7 +73,7 @@ export const Navbar: React.FC = () => {
   return (
     <header className="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Left: Mobile Menu Button */}
           <div className="flex items-center">
             <button
@@ -291,35 +291,6 @@ export const Navbar: React.FC = () => {
                         </div>
                       </div>
                       <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-purple-600 group-hover:translate-x-0.5 transition-all" />
-                    </button>
-
-                    {/* Role Quick Toggle */}
-                    <button
-                      onClick={() => {
-                        updateUser({
-                          role: user.role === 'athlete' ? 'trainer' : 'athlete',
-                        });
-                      }}
-                      className="w-full flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors group text-left cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="p-2 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60">
-                          <Award className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                            Switch to {user.role === 'athlete' ? 'Coach' : 'Athlete'}
-                          </p>
-                          <p className="text-[10px] text-slate-400 dark:text-slate-500">
-                            {user.role === 'athlete'
-                              ? 'Access Coach Client HQ & Prescriptions'
-                              : 'Access Athlete Workout Splits & Check-in'}
-                          </p>
-                        </div>
-                      </div>
-                      <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/60 px-2 py-0.5 rounded-lg border border-purple-200 dark:border-purple-800">
-                        Toggle
-                      </span>
                     </button>
 
                     {/* Sign Out / Switch Account */}

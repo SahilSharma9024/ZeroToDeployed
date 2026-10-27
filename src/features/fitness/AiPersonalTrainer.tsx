@@ -38,6 +38,79 @@ interface ChatMessage {
   guardrails?: string[];
 }
 
+// Markdown formatting component to replace raw ** with bold text & styled lists
+function FormattedAiText({ text }: { text: string }) {
+  const lines = text.split('\n');
+
+  const renderInlineStyles = (str: string) => {
+    const parts = str.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, idx) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return (
+          <strong key={idx} className="font-extrabold text-slate-900 dark:text-white">
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+      return part;
+    });
+  };
+
+  return (
+    <div className="space-y-1.5 leading-relaxed">
+      {lines.map((line, lIdx) => {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          return <div key={lIdx} className="h-1.5" />;
+        }
+
+        // Headings
+        if (trimmed.startsWith('### ')) {
+          return (
+            <h4 key={lIdx} className="text-xs sm:text-sm font-black text-purple-700 dark:text-purple-300 pt-2 pb-0.5">
+              {renderInlineStyles(trimmed.slice(4))}
+            </h4>
+          );
+        }
+        if (trimmed.startsWith('## ') || trimmed.startsWith('# ')) {
+          return (
+            <h3 key={lIdx} className="text-sm font-black text-slate-900 dark:text-white pt-2.5 pb-0.5 border-b border-slate-200/50 dark:border-slate-700/50">
+              {renderInlineStyles(trimmed.replace(/^#+\s*/, ''))}
+            </h3>
+          );
+        }
+
+        // Bullet points
+        if (trimmed.startsWith('• ') || trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
+          return (
+            <div key={lIdx} className="flex items-start gap-2 pl-1.5 py-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-500 dark:bg-purple-400 mt-1.5 shrink-0" />
+              <span className="flex-1 text-xs sm:text-sm">{renderInlineStyles(trimmed.slice(2))}</span>
+            </div>
+          );
+        }
+
+        // Numbered list items e.g. "1. " or "2) "
+        const numMatch = trimmed.match(/^(\d+[\.\)])\s+(.*)/);
+        if (numMatch) {
+          return (
+            <div key={lIdx} className="flex items-start gap-2 pl-1.5 py-0.5">
+              <span className="text-xs font-bold text-purple-600 dark:text-purple-400 shrink-0 min-w-[16px]">{numMatch[1]}</span>
+              <span className="flex-1 text-xs sm:text-sm">{renderInlineStyles(numMatch[2])}</span>
+            </div>
+          );
+        }
+
+        return (
+          <p key={lIdx} className="text-xs sm:text-sm">
+            {renderInlineStyles(trimmed)}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
 export const AiPersonalTrainer: React.FC = () => {
   const { user } = useApp();
 
@@ -282,13 +355,13 @@ export const AiPersonalTrainer: React.FC = () => {
         </button>
       </div>
 
-      {/* Main Layout Grid */}
+      {/* Main Layout Grid: Left = 4 cols, Right = 8 cols */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
         {/* ================================================================= */}
-        {/* LEFT COLUMN: MEMORY BANK & GUARDRAILS (5 COLS) */}
+        {/* LEFT COLUMN: MEMORY BANK & GUARDRAILS (4 COLS) */}
         {/* ================================================================= */}
-        <div className="lg:col-span-5 space-y-5">
+        <div className="lg:col-span-4 space-y-5">
 
           {/* Card 1: HindSight Active Memory Bank */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
@@ -296,7 +369,7 @@ export const AiPersonalTrainer: React.FC = () => {
             {/* Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-2xl bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800/60 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800/60 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">
                   <Brain className="w-4 h-4" />
                 </div>
                 <div>
@@ -312,7 +385,7 @@ export const AiPersonalTrainer: React.FC = () => {
               <button
                 onClick={loadMemories}
                 disabled={isFetchingMemories}
-                className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors"
+                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors"
                 title="Refresh Memory Bank"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isFetchingMemories ? 'animate-spin text-purple-600' : ''}`} />
@@ -320,10 +393,10 @@ export const AiPersonalTrainer: React.FC = () => {
             </div>
 
             {/* Category Filter Chips */}
-            <div className="flex items-center gap-1.5 p-1 bg-slate-100/80 dark:bg-slate-800/60 rounded-2xl">
+            <div className="flex items-center gap-1 p-1 bg-slate-100/80 dark:bg-slate-800/60 rounded-2xl">
               <button
                 onClick={() => setActiveTab('all')}
-                className={`flex-1 py-1 text-[11px] font-bold rounded-xl transition-all ${
+                className={`flex-1 py-1 text-[10px] font-bold rounded-xl transition-all ${
                   activeTab === 'all'
                     ? 'bg-white dark:bg-slate-700 text-purple-600 dark:text-purple-300 shadow-xs'
                     : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
@@ -333,7 +406,7 @@ export const AiPersonalTrainer: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab('injury')}
-                className={`flex-1 py-1 text-[11px] font-bold rounded-xl transition-all ${
+                className={`flex-1 py-1 text-[10px] font-bold rounded-xl transition-all ${
                   activeTab === 'injury'
                     ? 'bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-300 shadow-xs'
                     : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
@@ -343,7 +416,7 @@ export const AiPersonalTrainer: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab('nutrition')}
-                className={`flex-1 py-1 text-[11px] font-bold rounded-xl transition-all ${
+                className={`flex-1 py-1 text-[10px] font-bold rounded-xl transition-all ${
                   activeTab === 'nutrition'
                     ? 'bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-300 shadow-xs'
                     : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
@@ -353,7 +426,7 @@ export const AiPersonalTrainer: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab('milestone')}
-                className={`flex-1 py-1 text-[11px] font-bold rounded-xl transition-all ${
+                className={`flex-1 py-1 text-[10px] font-bold rounded-xl transition-all ${
                   activeTab === 'milestone'
                     ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-300 shadow-xs'
                     : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
@@ -364,9 +437,9 @@ export const AiPersonalTrainer: React.FC = () => {
             </div>
 
             {/* Memory List */}
-            <div className="space-y-2.5 max-h-[300px] overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[260px] overflow-y-auto pr-1">
               {filteredMemories.length === 0 ? (
-                <div className="p-6 text-center text-xs text-slate-400 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+                <div className="p-5 text-center text-xs text-slate-400 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
                   No records in this category.
                 </div>
               ) : (
@@ -378,7 +451,7 @@ export const AiPersonalTrainer: React.FC = () => {
                   return (
                     <div
                       key={mem.id}
-                      className={`p-3.5 rounded-2xl border transition-all ${
+                      className={`p-3 rounded-2xl border transition-all ${
                         isInjury
                           ? 'bg-rose-50/70 dark:bg-rose-950/20 border-rose-200/80 dark:border-rose-900/40 text-rose-950 dark:text-rose-200'
                           : isNutrition
@@ -386,16 +459,16 @@ export const AiPersonalTrainer: React.FC = () => {
                           : 'bg-emerald-50/70 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-900/40 text-emerald-950 dark:text-emerald-200'
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-2 mb-1.5">
+                      <div className="flex items-center justify-between gap-2 mb-1">
                         <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider">
-                          {isInjury && <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />}
-                          {isNutrition && <Utensils className="w-3.5 h-3.5 text-amber-600" />}
-                          {isMilestone && <Award className="w-3.5 h-3.5 text-emerald-600" />}
+                          {isInjury && <AlertTriangle className="w-3 h-3 text-rose-600" />}
+                          {isNutrition && <Utensils className="w-3 h-3 text-amber-600" />}
+                          {isMilestone && <Award className="w-3 h-3 text-emerald-600" />}
                           <span>{mem.category}</span>
                         </span>
 
                         <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700">
-                          {(mem.confidence * 100).toFixed(0)}% confidence
+                          {(mem.confidence * 100).toFixed(0)}%
                         </span>
                       </div>
 
@@ -403,9 +476,9 @@ export const AiPersonalTrainer: React.FC = () => {
                         {mem.content}
                       </p>
 
-                      <div className="mt-2 pt-1.5 border-t border-slate-200/40 dark:border-slate-800/40 flex items-center justify-between text-[10px] text-slate-500">
+                      <div className="mt-1.5 pt-1 border-t border-slate-200/40 dark:border-slate-800/40 flex items-center justify-between text-[9px] text-slate-500">
                         <span>Source: {mem.source}</span>
-                        <span className="text-purple-600 dark:text-purple-400 font-bold">Vectorize Synced</span>
+                        <span className="text-purple-600 dark:text-purple-400 font-bold">Synced</span>
                       </div>
                     </div>
                   );
@@ -422,17 +495,17 @@ export const AiPersonalTrainer: React.FC = () => {
                 <select
                   value={newMemoryCategory}
                   onChange={(e) => setNewMemoryCategory(e.target.value as any)}
-                  className="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  className="px-2 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-purple-500"
                 >
                   <option value="injury">🚨 Injury</option>
-                  <option value="nutrition">🥛 Nutrition</option>
+                  <option value="nutrition">🥛 Diet</option>
                   <option value="milestone">🏆 Milestone</option>
                   <option value="preference">⚙️ Preference</option>
                 </select>
 
                 <input
                   type="text"
-                  placeholder="e.g. Lower back stiffness with barbell squats..."
+                  placeholder="e.g. Lower back stiffness with squats..."
                   value={newMemoryText}
                   onChange={(e) => setNewMemoryText(e.target.value)}
                   className="flex-1 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-purple-500"
@@ -441,7 +514,7 @@ export const AiPersonalTrainer: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isAddingMemory || !newMemoryText.trim()}
-                  className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold text-xs transition-colors shrink-0 flex items-center justify-center"
+                  className="px-2.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold text-xs transition-colors shrink-0 flex items-center justify-center"
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </button>
@@ -450,65 +523,65 @@ export const AiPersonalTrainer: React.FC = () => {
 
           </div>
 
-          {/* Card 2: Active System Guardrails (Enforced on all plans) */}
-          <div className="p-5 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-md space-y-3.5">
+          {/* Card 2: Active System Guardrails (Enforced on all plans) - THEME-MATCHED */}
+          <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-sm space-y-3.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <h3 className="text-xs font-black uppercase tracking-wider text-slate-200">
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-slate-100">
                   Active System Guardrails
                 </h3>
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                 Enforced on All Plans
               </span>
             </div>
 
             <div className="space-y-2.5 text-xs">
               {/* Shoulder Protocol */}
-              <div className="p-3 rounded-2xl bg-slate-800/70 border border-slate-700/80 flex items-start gap-2.5">
+              <div className="p-3.5 rounded-2xl bg-rose-50/80 dark:bg-rose-950/20 border border-rose-200/80 dark:border-rose-900/40 flex items-start gap-2.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-rose-500 mt-1 shrink-0 animate-pulse" />
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <strong className="text-rose-200 font-bold text-xs">Rotator Cuff Impingement Restriction</strong>
-                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-rose-950 text-rose-300 border border-rose-800 font-bold">LOCKED</span>
+                    <strong className="text-rose-900 dark:text-rose-200 font-bold text-xs">Rotator Cuff Impingement Restriction</strong>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-rose-200/60 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800 font-bold">LOCKED</span>
                   </div>
-                  <p className="text-slate-400 text-[11px] leading-relaxed">
+                  <p className="text-slate-600 dark:text-slate-400 text-[11px] leading-relaxed">
                     All overhead barbell military presses blocked. Automatically replaced with Neutral-Grip DB Floor Presses & Face Pulls.
                   </p>
                 </div>
               </div>
 
               {/* Lactose Protocol */}
-              <div className="p-3 rounded-2xl bg-slate-800/70 border border-slate-700/80 flex items-start gap-2.5">
+              <div className="p-3.5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-900/40 flex items-start gap-2.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-500 mt-1 shrink-0 animate-pulse" />
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <strong className="text-amber-200 font-bold text-xs">Dairy Whey Elimination Protocol</strong>
-                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">LOCKED</span>
+                    <strong className="text-amber-900 dark:text-amber-200 font-bold text-xs">Dairy Whey Elimination Protocol</strong>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-200/60 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 font-bold">LOCKED</span>
                   </div>
-                  <p className="text-slate-400 text-[11px] leading-relaxed">
+                  <p className="text-slate-600 dark:text-slate-400 text-[11px] leading-relaxed">
                     Standard dairy whey concentrates blocked. Automatically replaced with Fermented Pea + Brown Rice Isolate.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
+            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400">
               <span className="flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                 Zero-Compromise Joint & GI Safety
               </span>
-              <span className="text-purple-400 font-bold">Real-time LLM Guardrail</span>
+              <span className="text-purple-600 dark:text-purple-400 font-bold">Real-time LLM Guardrail</span>
             </div>
           </div>
 
         </div>
 
         {/* ================================================================= */}
-        {/* RIGHT COLUMN: BEAUTIFUL CHAT PANEL (7 COLS) */}
+        {/* RIGHT COLUMN: BEAUTIFUL EXPANDED CHAT PANEL (8 COLS) */}
         {/* ================================================================= */}
-        <div className="lg:col-span-7 flex flex-col h-[700px] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="lg:col-span-8 flex flex-col h-[740px] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
           
           {/* Chat Header */}
           <div className="p-4 bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
@@ -531,47 +604,46 @@ export const AiPersonalTrainer: React.FC = () => {
 
             <button
               onClick={handleResetChat}
-              className="px-2.5 py-1.5 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-700/60 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-700/60 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5"
               title="Start a fresh conversation"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Reset</span>
+              <span>Reset Chat</span>
             </button>
           </div>
 
           {/* Chat Messages Log */}
-          <div className="flex-1 p-4 sm:p-5 space-y-4 overflow-y-auto">
+          <div className="flex-1 p-5 space-y-4 overflow-y-auto">
             {messages.map((msg) => {
               const isUser = msg.sender === 'user';
               return (
                 <div key={msg.id} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
                   <div
-                    className={`max-w-[88%] sm:max-w-[82%] rounded-3xl p-4 space-y-1.5 ${
+                    className={`max-w-[92%] sm:max-w-[85%] rounded-3xl p-4 sm:p-5 space-y-2 ${
                       isUser
                         ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-br-none shadow-sm'
-                        : 'bg-slate-100 dark:bg-slate-800/80 text-slate-900 dark:text-white rounded-bl-none border border-slate-200/80 dark:border-slate-700/80'
+                        : 'bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white rounded-bl-none border border-slate-200/80 dark:border-slate-700/80 shadow-xs'
                     }`}
                   >
                     {/* Guardrail badge banner if triggered */}
                     {msg.guardrails && msg.guardrails.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-2">
+                      <div className="flex flex-wrap gap-1.5 mb-2 pb-2 border-b border-rose-200/40 dark:border-rose-900/40">
                         {msg.guardrails.map((g, idx) => (
                           <span
                             key={idx}
-                            className="px-2 py-0.5 rounded-lg text-[9px] font-black bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-300/60 dark:border-rose-800 flex items-center gap-1"
+                            className="px-2.5 py-1 rounded-lg text-[10px] font-black bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-300/60 dark:border-rose-800 flex items-center gap-1.5 shadow-xs"
                           >
-                            <ShieldAlert className="w-2.5 h-2.5" />
+                            <ShieldAlert className="w-3 h-3" />
                             {g.replace(/_/g, ' ')}
                           </span>
                         ))}
                       </div>
                     )}
 
-                    <div className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-medium">
-                      {msg.text}
-                    </div>
+                    {/* Clean Formatted Text Output without raw ** tokens */}
+                    <FormattedAiText text={msg.text} />
 
-                    <span className={`text-[10px] block text-right font-medium ${isUser ? 'text-purple-200' : 'text-slate-400'}`}>
+                    <span className={`text-[10px] block text-right font-medium pt-1 ${isUser ? 'text-purple-200' : 'text-slate-400'}`}>
                       {msg.time}
                     </span>
                   </div>
@@ -589,48 +661,19 @@ export const AiPersonalTrainer: React.FC = () => {
             )}
           </div>
 
-          {/* Quick Prompt Suggestions */}
-          <div className="px-4 py-2 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2 overflow-x-auto no-scrollbar">
-            <span className="text-[10px] font-bold text-slate-400 uppercase shrink-0">Prompts:</span>
-            <button
-              onClick={() => setInputText('Give me an upper body push workout avoiding shoulder pain.')}
-              className="text-[11px] font-bold px-3 py-1 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0 hover:border-purple-400 transition-colors"
-            >
-              🏋️ Push Workout (Test Shoulder)
-            </button>
-            <button
-              onClick={() => setInputText('give me the diet plan, pure vegetarian diet, i have to gain 6 kg')}
-              className="text-[11px] font-bold px-3 py-1 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0 hover:border-purple-400 transition-colors"
-            >
-              🥗 Pure Veg Bulk Plan (+6kg)
-            </button>
-            <button
-              onClick={() => setInputText('What post-workout shake should I take with lactose intolerance?')}
-              className="text-[11px] font-bold px-3 py-1 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0 hover:border-purple-400 transition-colors"
-            >
-              🥛 Shake (Test Lactose)
-            </button>
-            <button
-              onClick={() => setInputText('I sprained my left ankle during basketball today.')}
-              className="text-[11px] font-bold px-3 py-1 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0 hover:border-purple-400 transition-colors"
-            >
-              🚨 Report Ankle Sprain (Auto-Retain)
-            </button>
-          </div>
-
           {/* Chat Input Bar */}
-          <form onSubmit={handleSendMessage} className="p-3 sm:p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2">
+          <form onSubmit={handleSendMessage} className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2.5">
             <input
               type="text"
               placeholder="Ask AI Coach a question (e.g. check shoulder safety, adjust split, custom diet)..."
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              className="flex-1 px-4 py-2.5 sm:py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+              className="flex-1 px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
             />
             <button
               type="submit"
               disabled={!inputText.trim() || isThinking}
-              className="p-2.5 sm:p-3 rounded-2xl bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-bold transition-all shrink-0 active:scale-95"
+              className="p-3 rounded-2xl bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-bold transition-all shrink-0 active:scale-95 shadow-md shadow-purple-500/20"
             >
               <Send className="w-4 h-4" />
             </button>

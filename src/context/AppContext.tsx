@@ -65,7 +65,7 @@ interface AppContextType {
   addGymBuddy: (buddy: Omit<GymBuddyBeacon, 'id'>) => void;
 
   // Real-Time Venues & City Selector
-  fetchVenues: (type?: 'all' | 'gym' | 'turf', lat?: number, lng?: number) => Promise<void>;
+  fetchVenues: (type?: 'all' | 'gym' | 'turf', lat?: number, lng?: number, city?: string) => Promise<void>;
   activeCity: string;
   setActiveCity: (city: string) => void;
   
@@ -224,7 +224,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeCity, setActiveCity] = useState<string>('Hyderabad');
 
   // Live Venues Fetcher from OpenStreetMap & SQLite
-  const fetchVenues = async (type: 'all' | 'gym' | 'turf' = 'all', lat?: number, lng?: number) => {
+  const fetchVenues = async (type: 'all' | 'gym' | 'turf' = 'all', lat?: number, lng?: number, city?: string) => {
     const queryLat = lat ?? userLocation?.lat ?? 17.3850;
     const queryLng = lng ?? userLocation?.lng ?? 78.4867;
     try {
@@ -244,9 +244,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               lat: v.latitude,
               lng: v.longitude,
               location: v.address || 'Central Fitness Zone',
-              priceMonthly: 1999 + ((idx * 350) % 1500),
+              priceMonthly: v.priceMonthly || (1999 + ((idx * 350) % 1500)),
               freeTrialAvailable: true,
-              imageUrl: [
+              imageUrl: v.imageUrl || [
                 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80',
                 'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=800&q=80',
                 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=800&q=80',

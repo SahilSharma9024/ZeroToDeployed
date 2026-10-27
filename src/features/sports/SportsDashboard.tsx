@@ -5,14 +5,16 @@ import { EventCard } from './EventCard';
 import { TurfCard } from './TurfCard';
 import { GhostSubSection } from './GhostSubSection';
 import { VenueType } from '../../types/sports';
-import { CloudRain, ShieldCheck, Trophy, MapPin, Users, ArrowRight, RefreshCw, Database, Navigation } from 'lucide-react';
+import { CloudRain, ShieldCheck, Trophy, MapPin, Users, ArrowRight, RefreshCw, Database, Navigation, Building2 } from 'lucide-react';
 
 const METRO_CITIES = [
   { name: 'Hyderabad', lat: 17.3850, lng: 78.4867, area: 'Jubilee Hills / Gachibowli' },
-  { name: 'Bengaluru', lat: 12.9345, lng: 77.6265, area: 'Koramangala / Sarjapur' },
+  { name: 'Bengaluru', lat: 12.9716, lng: 77.5946, area: 'Koramangala / Sarjapur' },
   { name: 'Mumbai', lat: 19.0760, lng: 72.8777, area: 'Bandra / Powai' },
   { name: 'Delhi NCR', lat: 28.6139, lng: 77.2090, area: 'Siri Fort / CyberHub' },
   { name: 'Pune', lat: 18.5204, lng: 73.8567, area: 'Viman Nagar / Balewadi' },
+  { name: 'Chennai', lat: 13.0827, lng: 80.2707, area: 'T Nagar / Anna Nagar' },
+  { name: 'Kolkata', lat: 22.5726, lng: 88.3639, area: 'Salt Lake / New Town' },
 ];
 
 interface SportsDashboardProps {
@@ -25,22 +27,49 @@ export const SportsDashboard: React.FC<SportsDashboardProps> = ({ initialSubTab 
   // Tab State
   const [activeTab, setActiveTab] = useState<'events' | 'turfs' | 'ghostSub'>(initialSubTab);
   const [selectedCity, setSelectedCity] = useState<string>('Hyderabad');
+  const [customCityInput, setCustomCityInput] = useState<string>('');
   const [isFetchingTurfs, setIsFetchingTurfs] = useState<boolean>(false);
 
   const handleCityChange = async (city: typeof METRO_CITIES[0]) => {
     setSelectedCity(city.name);
     setIsFetchingTurfs(true);
-    await fetchVenues('turf', city.lat, city.lng);
+    await fetchVenues('turf', city.lat, city.lng, city.name);
     setIsFetchingTurfs(false);
   };
 
-  const handleUseGps = async () => {
+  const handleCustomCitySearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customCityInput.trim()) return;
+    const city = customCityInput.trim();
+    setSelectedCity(city);
+    setIsFetchingTurfs(true);
+    await fetchVenues('turf', undefined, undefined, city);
+    setIsFetchingTurfs(false);
+  };
+
+  const handleUseGps = () => {
     setSelectedCity('My Live GPS');
-    requestUserLocation();
-    if (userLocation) {
+    if ('geolocation' in navigator) {
       setIsFetchingTurfs(true);
-      await fetchVenues('turf', userLocation.lat, userLocation.lng);
-      setIsFetchingTurfs(false);
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          await fetchVenues('turf', lat, lng);
+          setIsFetchingTurfs(false);
+        },
+        async () => {
+          setIsFetchingTurfs(false);
+          if (userLocation) {
+            await fetchVenues('turf', userLocation.lat, userLocation.lng);
+          } else {
+            alert('Location access was denied. You can enter your city in the search bar below.');
+          }
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    } else {
+      alert('Geolocation is not supported by your browser.');
     }
   };
 
@@ -110,17 +139,66 @@ export const SportsDashboard: React.FC<SportsDashboardProps> = ({ initialSubTab 
 
         <button
           onClick={() => {
-            setActivePage('sports-map');
+            setActiveTab('turfs');
+            setSelectedVenueType('Indoor');
           }}
-          className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all whitespace-nowrap"
+          className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-sky-50 dark:bg-sky-900/50 hover:bg-sky-100 text-sky-700 dark:text-sky-300 text-xs font-bold border border-sky-200 dark:border-sky-700 transition-colors shrink-0"
         >
-          <span>View Map Radar</span>
+          <span>Filter Covered Turfs</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
 
-      {/* Hero Quick Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Sub Navigation Bar */}
+      <div className="flex items-center gap-2 border-b border-slate-200/80 dark:border-slate-800 pb-4 overflow-x-auto no-scrollbar">
+        <button
+          onClick={() => setActiveTab('events')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer shrink-0 ${
+            activeTab === 'events'
+              ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-soft'
+              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-800'
+          }`}
+        >
+          <Trophy className="w-4 h-4" />
+          <span>Tournaments & Pickups</span>
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-white/20 text-white ml-1">
+            {events.length}
+          </span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('turfs')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer shrink-0 ${
+            activeTab === 'turfs'
+              ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-soft'
+              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-800'
+          }`}
+        >
+          <MapPin className="w-4 h-4" />
+          <span>Real Turfs & Arenas</span>
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-white/20 text-white ml-1">
+            {turfs.length}
+          </span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('ghostSub')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer shrink-0 ${
+            activeTab === 'ghostSub'
+              ? 'bg-gradient-to-r from-rose-500 to-amber-500 text-white shadow-soft'
+              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-800'
+          }`}
+        >
+          <Users className="w-4 h-4" />
+          <span>Ghost Sub Emergency Matching</span>
+          {ghostSubs.filter(g => g.playersNeeded > (g.acceptedUsers?.length || 0)).length > 0 && (
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping ml-1" />
+          )}
+        </button>
+      </div>
+
+      {/* KPI Stats Bar */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-md ring-1 ring-slate-900/[0.04] dark:ring-white/[0.05] hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3.5 relative overflow-hidden group">
           <div className="absolute top-0 left-0 right-0 h-1 bg-purple-500" />
@@ -129,18 +207,18 @@ export const SportsDashboard: React.FC<SportsDashboardProps> = ({ initialSubTab 
           </div>
           <div>
             <span className="text-xl font-black text-slate-900 dark:text-white block leading-tight">{events.length}</span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Active Tournaments</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Active Matches</span>
           </div>
         </div>
 
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-md ring-1 ring-slate-900/[0.04] dark:ring-white/[0.05] hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3.5 relative overflow-hidden group">
           <div className="absolute top-0 left-0 right-0 h-1 bg-rose-500" />
-          <div className="w-11 h-11 rounded-2xl bg-rose-100 dark:bg-rose-950/70 text-rose-600 dark:text-rose-300 flex items-center justify-center font-bold shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+          <div className="w-11 h-11 rounded-2xl bg-rose-100 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold shadow-sm shrink-0 group-hover:scale-105 transition-transform">
             <Users className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-xl font-black text-slate-900 dark:text-white block leading-tight">{ghostSubs.length}</span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">SOS Ghost Subs</span>
+            <span className="text-xl font-black text-slate-900 dark:text-white block leading-tight">{ghostSubs.filter(g => g.playersNeeded > (g.acceptedUsers?.length || 0)).length}</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Urgent SOS Beacons</span>
           </div>
         </div>
 
@@ -167,7 +245,6 @@ export const SportsDashboard: React.FC<SportsDashboardProps> = ({ initialSubTab 
         </div>
 
       </div>
-
 
       {/* Active Tab Content */}
       {activeTab === 'events' && (
@@ -221,7 +298,7 @@ export const SportsDashboard: React.FC<SportsDashboardProps> = ({ initialSubTab 
                   Live OpenStreetMap Overpass & SQLite
                 </span>
                 <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
-                  Showing {filteredTurfs.length} Turfs
+                  Showing {filteredTurfs.length} Turfs • City: <strong className="text-slate-900 dark:text-white">{selectedCity}</strong>
                 </span>
               </div>
 
@@ -235,18 +312,39 @@ export const SportsDashboard: React.FC<SportsDashboardProps> = ({ initialSubTab 
               </button>
             </div>
 
+            {/* Enter Custom City Form */}
+            <form onSubmit={handleCustomCitySearch} className="flex gap-2">
+              <div className="relative flex-1">
+                <Building2 className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  placeholder="Enter any city name for sports pitches (e.g. Mumbai, Kolkata, Jaipur, Delhi)..."
+                  value={customCityInput}
+                  onChange={(e) => setCustomCityInput(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={!customCityInput.trim() || isFetchingTurfs}
+                className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-700 hover:to-indigo-700 text-white font-bold text-xs shadow-md transition-all shrink-0 active:scale-95 disabled:opacity-50"
+              >
+                Search City
+              </button>
+            </form>
+
             {/* City Pills */}
             <div className="flex items-center gap-2 flex-wrap pt-1">
               <button
                 onClick={handleUseGps}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   selectedCity === 'My Live GPS'
                     ? 'bg-emerald-600 text-white shadow-sm'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
-                <Navigation className="w-3.5 h-3.5" />
-                <span>📍 My GPS</span>
+                <Navigation className={`w-3.5 h-3.5 ${isFetchingTurfs && selectedCity === 'My Live GPS' ? 'animate-spin text-emerald-200' : ''}`} />
+                <span>📍 My GPS Location</span>
               </button>
 
               {METRO_CITIES.map((city) => (
@@ -260,7 +358,6 @@ export const SportsDashboard: React.FC<SportsDashboardProps> = ({ initialSubTab 
                   }`}
                 >
                   <span>{city.name}</span>
-                  <span className="text-[10px] opacity-75 ml-1 hidden sm:inline">({city.area})</span>
                 </button>
               ))}
             </div>

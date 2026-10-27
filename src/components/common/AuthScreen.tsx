@@ -184,29 +184,6 @@ export const AuthScreen: React.FC = () => {
           </p>
         </div>
 
-        {/* 1-Click Fast Pass Demo Login Banner */}
-        <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-purple-900/50 via-indigo-900/40 to-slate-800/80 border border-purple-500/40 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-inner">
-          <div className="flex items-center gap-2.5 text-left">
-            <div className="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300 shrink-0">
-              <Zap className="w-5 h-5 text-amber-400 fill-amber-400" />
-            </div>
-            <div>
-              <span className="text-xs font-black text-purple-200 block">Instant Evaluator Access</span>
-              <span className="text-[11px] text-slate-300">Aarav Sharma • Pre-loaded HindSight memories</span>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleDemoLogin}
-            disabled={loading}
-            className="w-full sm:w-auto px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-extrabold text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-1.5"
-          >
-            <span>1-Click Enter</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
         {/* Tab Toggle: Sign Up vs Login */}
         <div className="grid grid-cols-2 p-1 bg-slate-800/80 rounded-2xl border border-slate-700/60 mb-6">
           <button

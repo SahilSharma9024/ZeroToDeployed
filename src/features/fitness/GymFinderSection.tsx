@@ -1,35 +1,71 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Star, MapPin, Check, Zap, Clock, Navigation, RefreshCw, Database, Search, ShieldCheck } from 'lucide-react';
+import { Star, MapPin, Check, Zap, Clock, Navigation, RefreshCw, Database, Search, ShieldCheck, Building2, ArrowRight } from 'lucide-react';
 
 const METRO_CITIES = [
   { name: 'Hyderabad', lat: 17.3850, lng: 78.4867, area: 'Banjara Hills / Hitec' },
-  { name: 'Bengaluru', lat: 12.9345, lng: 77.6265, area: 'Koramangala / Indiranagar' },
+  { name: 'Bengaluru', lat: 12.9716, lng: 77.5946, area: 'Koramangala / Indiranagar' },
   { name: 'Mumbai', lat: 19.0760, lng: 72.8777, area: 'Bandra / Andheri' },
   { name: 'Delhi NCR', lat: 28.6139, lng: 77.2090, area: 'Connaught Pl / Gurgaon' },
   { name: 'Pune', lat: 18.5204, lng: 73.8567, area: 'Koregaon Park / Baner' },
+  { name: 'Chennai', lat: 13.0827, lng: 80.2707, area: 'T Nagar / Anna Nagar' },
+  { name: 'Kolkata', lat: 22.5726, lng: 88.3639, area: 'Salt Lake / Park St' },
+  { name: 'Jaipur', lat: 26.9124, lng: 75.7873, area: 'C Scheme / Malviya Nagar' },
 ];
 
 export const GymFinderSection: React.FC = () => {
   const { gyms, openAutoRegister, fetchVenues, userLocation, requestUserLocation, isLocating } = useApp();
   const [selectedCity, setSelectedCity] = useState<string>('Hyderabad');
+  const [customCityInput, setCustomCityInput] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
+  // 1. Change City via quick button
   const handleCityChange = async (city: typeof METRO_CITIES[0]) => {
     setSelectedCity(city.name);
     setIsFetching(true);
-    await fetchVenues('gym', city.lat, city.lng);
+    await fetchVenues('gym', city.lat, city.lng, city.name);
     setIsFetching(false);
   };
 
-  const handleUseGps = async () => {
+  // 2. Custom City Search
+  const handleCustomCitySearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customCityInput.trim()) return;
+
+    const city = customCityInput.trim();
+    setSelectedCity(city);
+    setIsFetching(true);
+    await fetchVenues('gym', undefined, undefined, city);
+    setIsFetching(false);
+  };
+
+  // 3. Exact GPS Location Fetching
+  const handleUseGps = () => {
     setSelectedCity('My Live GPS');
-    requestUserLocation();
-    if (userLocation) {
+    if ('geolocation' in navigator) {
       setIsFetching(true);
-      await fetchVenues('gym', userLocation.lat, userLocation.lng);
-      setIsFetching(false);
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          await fetchVenues('gym', lat, lng);
+          setIsFetching(false);
+        },
+        async (err) => {
+          console.warn('Geolocation error:', err.message);
+          setIsFetching(false);
+          // Fallback to existing user location if stored
+          if (userLocation) {
+            await fetchVenues('gym', userLocation.lat, userLocation.lng);
+          } else {
+            alert('Location access was denied or timed out. You can enter your city in the search bar below.');
+          }
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    } else {
+      alert('Geolocation is not supported by your browser. Please type your city name below.');
     }
   };
 
@@ -58,7 +94,7 @@ export const GymFinderSection: React.FC = () => {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fadeIn">
       
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-rose-50 via-purple-50 to-amber-50 dark:from-rose-950/40 dark:via-purple-950/40 dark:to-slate-900 rounded-3xl p-6 border border-rose-100 dark:border-rose-900/40 shadow-soft flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -94,7 +130,7 @@ export const GymFinderSection: React.FC = () => {
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
               <MapPin className="w-4 h-4 text-rose-500" />
-              Select City / Location Center:
+              Location Center: <span className="text-slate-900 dark:text-white font-black">{selectedCity}</span>
             </span>
           </div>
 
@@ -108,8 +144,29 @@ export const GymFinderSection: React.FC = () => {
           </button>
         </div>
 
-        {/* City Pills */}
-        <div className="flex items-center gap-2 flex-wrap">
+        {/* Enter Custom City Form */}
+        <form onSubmit={handleCustomCitySearch} className="flex gap-2">
+          <div className="relative flex-1">
+            <Building2 className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+            <input
+              type="text"
+              placeholder="Enter any city name (e.g. Mumbai, Kolkata, Jaipur, Chandigarh, Lucknow)..."
+              value={customCityInput}
+              onChange={(e) => setCustomCityInput(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={!customCityInput.trim() || isFetching}
+            className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-rose-500 to-purple-600 hover:from-rose-600 hover:to-purple-700 text-white font-bold text-xs shadow-md transition-all shrink-0 active:scale-95 disabled:opacity-50"
+          >
+            Search City
+          </button>
+        </form>
+
+        {/* City Pills & GPS Button */}
+        <div className="flex items-center gap-2 flex-wrap pt-1">
           <button
             onClick={handleUseGps}
             className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm ${
@@ -118,8 +175,8 @@ export const GymFinderSection: React.FC = () => {
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
           >
-            <Navigation className={`w-3.5 h-3.5 ${isLocating ? 'animate-spin' : ''}`} />
-            <span>📍 My Live GPS</span>
+            <Navigation className={`w-3.5 h-3.5 ${isFetching && selectedCity === 'My Live GPS' ? 'animate-spin text-rose-300' : ''}`} />
+            <span>📍 My Live GPS Location</span>
           </button>
 
           {METRO_CITIES.map((city) => (
@@ -133,20 +190,19 @@ export const GymFinderSection: React.FC = () => {
               }`}
             >
               <span>{city.name}</span>
-              <span className="text-[10px] opacity-75 ml-1 hidden sm:inline">({city.area})</span>
             </button>
           ))}
         </div>
 
-        {/* Search Input */}
+        {/* Filter Input */}
         <div className="relative">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
           <input
             type="text"
-            placeholder="Filter by gym name, amenity (e.g. CrossFit, Sauna, Free Weights) or locality..."
+            placeholder="Filter current list by gym name, amenity (e.g. CrossFit, Sauna, Free Weights) or locality..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
+            className="w-full pl-10 pr-4 py-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
           />
         </div>
       </div>
@@ -236,8 +292,8 @@ export const GymFinderSection: React.FC = () => {
               <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
                 <div>
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">Monthly Membership</span>
-                  <span className="text-sm font-extrabold text-slate-900 dark:text-white">
-                    ₹{gym.priceMonthly}<span className="text-[10px] font-normal text-slate-500 dark:text-slate-400">/mo</span>
+                  <span className="text-base font-black text-slate-900 dark:text-white">
+                    ₹{gym.priceMonthly}<span className="text-xs font-normal text-slate-500 dark:text-slate-400">/mo</span>
                   </span>
                 </div>
 
