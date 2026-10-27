@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ActivePage } from '../../types';
 import {
+  Home,
   Trophy,
   MapPin,
   Map,
@@ -13,6 +14,8 @@ import {
   Bot,
   Video,
   X,
+  Compass,
+  CalendarCheck,
   PanelLeftClose,
   PanelLeftOpen,
   Gamepad2,
@@ -21,8 +24,10 @@ import { KinetiQMark } from './Logo';
 
 export const Sidebar: React.FC = () => {
   const {
+    mode,
     activePage,
     setActivePage,
+    user,
     passes,
     ghostSubs,
     gymBuddies,
@@ -31,14 +36,6 @@ export const Sidebar: React.FC = () => {
     isSidebarCollapsed,
     toggleSidebarCollapse,
   } = useApp();
-
-  // Resizable sidebar width with local persistence
-  const [sidebarWidth, setSidebarWidth] = useState<number>(() => {
-    const saved = localStorage.getItem('KinetiQ_sidebar_width');
-    const parsed = saved ? parseInt(saved, 10) : 288;
-    return !isNaN(parsed) && parsed >= 240 && parsed <= 460 ? parsed : 288;
-  });
-  const [isResizing, setIsResizing] = useState(false);
 
   // Keyboard shortcut Ctrl+B / Cmd+B to toggle sidebar collapse
   useEffect(() => {
@@ -52,41 +49,28 @@ export const Sidebar: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [toggleSidebarCollapse]);
 
-  useEffect(() => {
-    localStorage.setItem('KinetiQ_sidebar_width', sidebarWidth.toString());
-  }, [sidebarWidth]);
-
   const handleNav = (page: ActivePage) => {
     setActivePage(page);
     setIsMobileSidebarOpen(false);
   };
 
-  // Draggable resize handler
-  const handleResizeStart = (e: React.PointerEvent) => {
-    e.preventDefault();
-    setIsResizing(true);
-    document.body.style.cursor = 'col-resize';
-    document.body.style.userSelect = 'none';
-
-    const handlePointerMove = (moveEvent: PointerEvent) => {
-      const newWidth = Math.min(Math.max(moveEvent.clientX, 240), 460);
-      setSidebarWidth(newWidth);
-    };
-
-    const handlePointerUp = () => {
-      setIsResizing(false);
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerup', handlePointerUp);
-    };
-
-    window.addEventListener('pointermove', handlePointerMove);
-    window.addEventListener('pointerup', handlePointerUp);
-  };
-
-  // Social Community Navigation Items
-  const socialNav = [
+  const sportsNav = [
+    // {
+    //   id: 'sports-overview' as ActivePage,
+    //   label: 'Sports Overview',
+    //   icon: Compass,
+    //   color: 'text-indigo-600 dark:text-indigo-400',
+    //   bg: 'bg-indigo-50 dark:bg-indigo-950/60',
+    // },
+    {
+      id: 'virtual-gym' as ActivePage,
+      label: 'Virtual Gym',
+      icon: Gamepad2,
+      // badge: '🎮 3D RPG',
+      badgeColor: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-sm',
+      color: 'text-fuchsia-600 dark:text-fuchsia-400',
+      bg: 'bg-fuchsia-50 dark:bg-fuchsia-950/60',
+    },
     {
       id: 'sports-events' as ActivePage,
       label: 'Tournaments & Events',
@@ -120,14 +104,6 @@ export const Sidebar: React.FC = () => {
       bg: 'bg-rose-50 dark:bg-rose-950/60',
     },
     {
-      id: 'fitness-buddy' as ActivePage,
-      label: 'Motivation Buddy',
-      icon: Users,
-      badge: `${gymBuddies.length} Live`,
-      color: 'text-orange-600 dark:text-orange-400',
-      bg: 'bg-orange-50 dark:bg-orange-950/60',
-    },
-    {
       id: 'sports-passes' as ActivePage,
       label: 'My Sports Passes',
       icon: Ticket,
@@ -137,14 +113,20 @@ export const Sidebar: React.FC = () => {
     },
   ];
 
-  // Personal Fitness & Individual Training Items
-  const personalNav = [
+  const fitnessNav = [
+    // {
+    //   id: 'fitness-overview' as ActivePage,
+    //   label: 'Fitness Overview',
+    //   icon: Compass,
+    //   color: 'text-purple-600 dark:text-purple-400',
+    //   bg: 'bg-purple-50 dark:bg-purple-950/60',
+    // },
     {
       id: 'virtual-gym' as ActivePage,
       label: 'Virtual Gym',
       icon: Gamepad2,
       badge: '🎮 3D Avatar',
-      badgeColor: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-sm',
+      badgeColor: 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-sm',
       color: 'text-fuchsia-600 dark:text-fuchsia-400',
       bg: 'bg-fuchsia-50 dark:bg-fuchsia-950/60',
     },
@@ -156,6 +138,14 @@ export const Sidebar: React.FC = () => {
       color: 'text-blue-600 dark:text-blue-400',
       bg: 'bg-blue-50 dark:bg-blue-950/60',
     },
+    // {
+    //   id: 'fitness-map' as ActivePage,
+    //   label: 'Interactive Gym Map',
+    //   icon: Map,
+    //   highlight: true,
+    //   color: 'text-teal-600 dark:text-teal-400',
+    //   bg: 'bg-teal-50 dark:bg-teal-950/60',
+    // },
     {
       id: 'fitness-calculators' as ActivePage,
       label: 'BMI & BMR Suite',
@@ -172,6 +162,21 @@ export const Sidebar: React.FC = () => {
       color: 'text-violet-600 dark:text-violet-400',
       bg: 'bg-violet-50 dark:bg-violet-950/60',
     },
+    // {
+    //   id: 'fitness-portal' as ActivePage,
+    //   label: user.role === 'trainer' ? 'Coach Client HQ' : 'My Workout & Meals',
+    //   icon: CalendarCheck,
+    //   color: 'text-emerald-600 dark:text-emerald-400',
+    //   bg: 'bg-emerald-50 dark:bg-emerald-950/60',
+    // },
+    {
+      id: 'fitness-buddy' as ActivePage,
+      label: 'Motivation Buddy',
+      icon: Users,
+      badge: `${gymBuddies.length} Live`,
+      color: 'text-orange-600 dark:text-orange-400',
+      bg: 'bg-orange-50 dark:bg-orange-950/60',
+    },
     {
       id: 'fitness-exercises' as ActivePage,
       label: 'Video Academy',
@@ -179,7 +184,17 @@ export const Sidebar: React.FC = () => {
       color: 'text-rose-600 dark:text-rose-400',
       bg: 'bg-rose-50 dark:bg-rose-950/60',
     },
+    // {
+    //   id: 'fitness-passes' as ActivePage,
+    //   label: 'My Free Trial Passes',
+    //   icon: Ticket,
+    //   badge: `${passes.filter((p) => p.type === 'gym_pass').length}`,
+    //   color: 'text-indigo-600 dark:text-indigo-400',
+    //   bg: 'bg-indigo-50 dark:bg-indigo-950/60',
+    // },
   ];
+
+  const currentNav = mode === 'sports' ? sportsNav : fitnessNav;
 
   return (
     <>
@@ -191,24 +206,18 @@ export const Sidebar: React.FC = () => {
         />
       )}
 
-      {/* Sidebar Container: Resizable on desktop, fixed slide-over drawer on mobile */}
+      {/* Sidebar Container: Fixed to viewport height, doesn't scroll with main content */}
       <aside
-        style={{
-          width: isSidebarCollapsed ? undefined : `${sidebarWidth}px`,
-        }}
-        className={`fixed top-0 bottom-0 left-0 z-50 bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 flex flex-col justify-between lg:static lg:h-screen lg:shrink-0 relative ${
-          isResizing ? 'transition-none select-none' : 'transition-all duration-200 ease-in-out'
-        } ${
+        className={`fixed top-0 bottom-0 left-0 z-50 bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 flex flex-col justify-between transition-all duration-300 ease-in-out lg:static lg:h-screen lg:shrink-0 ${
           isMobileSidebarOpen ? 'translate-x-0 w-72' : '-translate-x-full lg:translate-x-0'
-        } ${isSidebarCollapsed ? 'lg:w-20' : ''}`}
+        } ${isSidebarCollapsed ? 'lg:w-20' : 'lg:w-72'} w-72`}
       >
         <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden no-scrollbar">
+          
           {/* Top Brand & Collapse/Close Actions */}
-          <div
-            className={`p-4 border-b border-slate-100 dark:border-slate-800 flex items-center ${
-              isSidebarCollapsed ? 'lg:justify-center' : 'justify-between'
-            }`}
-          >
+          <div className={`p-4 border-b border-slate-100 dark:border-slate-800 flex items-center ${
+            isSidebarCollapsed ? 'lg:justify-center' : 'justify-between'
+          }`}>
             {!isSidebarCollapsed ? (
               <>
                 <button
@@ -274,161 +283,133 @@ export const Sidebar: React.FC = () => {
             )}
           </div>
 
-          {/* Navigation Categories */}
-          <div
-            className={`p-3 space-y-4 flex-1 ${
-              isSidebarCollapsed ? 'flex flex-col items-center space-y-3' : ''
-            }`}
-          >
-            {/* 1. SOCIAL CATEGORY */}
-            <div className="space-y-1 w-full">
-              {!isSidebarCollapsed ? (
-                <div className="pt-1 pb-1.5 px-3 flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                    Social
+          {/* Mode Indicator Pill */}
+          <div className="p-3 border-b border-slate-100 dark:border-slate-800/80">
+            {!isSidebarCollapsed ? (
+              <div className={`p-2.5 rounded-2xl border transition-colors ${
+                mode === 'sports'
+                  ? 'bg-purple-50/80 dark:bg-purple-950/30 border-purple-200/60 dark:border-purple-800/40'
+                  : 'bg-rose-50/80 dark:bg-rose-950/30 border-rose-200/60 dark:border-rose-800/40'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    Active Domain
                   </span>
-                  <span className="text-[9px] font-extrabold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 px-2 py-0.5 rounded-full border border-purple-200/50 dark:border-purple-800/40">
-                    Community
-                  </span>
+                  <span className={`w-2 h-2 rounded-full animate-ping ${
+                    mode === 'sports' ? 'bg-purple-500' : 'bg-rose-500'
+                  }`} />
                 </div>
-              ) : (
-                <div className="w-8 h-px bg-slate-200 dark:bg-slate-800 my-1 mx-auto" title="Social" />
-              )}
+                <p className={`text-xs font-extrabold mt-0.5 ${
+                  mode === 'sports' ? 'text-purple-700 dark:text-purple-300' : 'text-rose-600 dark:text-rose-300'
+                }`}>
+                  {mode === 'sports' ? '⚽ Sports & Turf Network' : '🏋️ Fitness & Wellness Suite'}
+                </p>
+              </div>
+            ) : (
+              <div
+                className={`p-2 rounded-2xl border flex flex-col items-center justify-center transition-colors ${
+                  mode === 'sports'
+                    ? 'bg-purple-50/80 dark:bg-purple-950/30 border-purple-200/60 dark:border-purple-800/40 text-purple-700 dark:text-purple-300'
+                    : 'bg-rose-50/80 dark:bg-rose-950/30 border-rose-200/60 dark:border-rose-800/40 text-rose-600 dark:text-rose-300'
+                }`}
+                title={mode === 'sports' ? 'Active: Sports & Turf Network' : 'Active: Fitness & Wellness Suite'}
+              >
+                <span className={`w-2 h-2 rounded-full ${
+                  mode === 'sports' ? 'bg-purple-500 animate-pulse' : 'bg-rose-500 animate-pulse'
+                }`} />
+              </div>
+            )}
+          </div>
 
-              {socialNav.map((item) => {
-                const Icon = item.icon;
-                const isActive = activePage === item.id;
+          {/* Navigation Links with Colorful Logos & Icons */}
+          <div className={`p-3 space-y-1.5 flex-1 ${isSidebarCollapsed ? 'flex flex-col items-center' : ''}`}>
+            
+            {/* Global Home Link */}
+            <button
+              onClick={() => handleNav('home')}
+              title="Global Dashboard"
+              className={`w-full flex items-center ${
+                isSidebarCollapsed ? 'justify-center p-2 w-11 h-11' : 'justify-between px-3 py-2'
+              } rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+                activePage === 'home'
+                  ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/40 shadow-sm'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform ${
+                  activePage === 'home'
+                    ? 'bg-purple-600 text-white shadow-soft scale-105'
+                    : 'bg-violet-100 dark:bg-violet-950/60 text-violet-600 dark:text-violet-400'
+                }`}>
+                  <Home className="w-4 h-4" />
+                </div>
+                {!isSidebarCollapsed && <span>Global Dashboard</span>}
+              </div>
+            </button>
 
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleNav(item.id)}
-                    title={item.label}
-                    className={`w-full flex items-center ${
-                      isSidebarCollapsed
-                        ? 'justify-center p-2 w-11 h-11 relative'
-                        : 'justify-between px-3 py-2'
-                    } rounded-2xl text-xs font-bold transition-all cursor-pointer ${
-                      isActive
+            {/* Section Divider or Label */}
+            {!isSidebarCollapsed ? (
+              <div className="pt-2 pb-0.5">
+                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-3">
+                  {mode === 'sports' ? 'Sports Navigation' : 'Fitness Navigation'}
+                </span>
+              </div>
+            ) : (
+              <div className="w-8 h-px bg-slate-200 dark:bg-slate-800 my-1.5" />
+            )}
+
+            {/* Dynamic Section Links with Colorful Icons */}
+            {currentNav.map((item) => {
+              const Icon = item.icon;
+              const isActive = activePage === item.id;
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleNav(item.id)}
+                  title={item.label}
+                  className={`w-full flex items-center ${
+                    isSidebarCollapsed ? 'justify-center p-2 w-11 h-11 relative' : 'justify-between px-3 py-2'
+                  } rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+                    isActive
+                      ? mode === 'sports'
                         ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/40 shadow-sm'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div
-                        className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform ${
-                          isActive
-                            ? 'bg-purple-600 text-white shadow-soft scale-105'
-                            : `${item.bg} ${item.color}`
-                        }`}
-                      >
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      {!isSidebarCollapsed && (
-                        <span className="truncate">{item.label}</span>
-                      )}
-                    </div>
-
-                    {/* Badge */}
-                    {item.badge &&
-                      (!isSidebarCollapsed ? (
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold flex-shrink-0 ${
-                            item.badgeColor ||
-                            'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                          }`}
-                        >
-                          {item.badge}
-                        </span>
-                      ) : (
-                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-purple-500 ring-2 ring-white dark:ring-slate-900" />
-                      ))}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* 2. PERSONAL CATEGORY */}
-            <div className="space-y-1 w-full pt-1 border-t border-slate-100 dark:border-slate-800/80">
-              {!isSidebarCollapsed ? (
-                <div className="pt-2 pb-1.5 px-3 flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                    Personal
-                  </span>
-                  <span className="text-[9px] font-extrabold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-full border border-rose-200/50 dark:border-rose-800/40">
-                    Individual
-                  </span>
-                </div>
-              ) : (
-                <div className="w-8 h-px bg-slate-200 dark:bg-slate-800 my-1 mx-auto" title="Personal" />
-              )}
-
-              {personalNav.map((item) => {
-                const Icon = item.icon;
-                const isActive = activePage === item.id;
-
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleNav(item.id)}
-                    title={item.label}
-                    className={`w-full flex items-center ${
-                      isSidebarCollapsed
-                        ? 'justify-center p-2 w-11 h-11 relative'
-                        : 'justify-between px-3 py-2'
-                    } rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+                        : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800/40 shadow-sm'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform ${
                       isActive
-                        ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800/40 shadow-sm'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div
-                        className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform ${
-                          isActive
-                            ? 'bg-rose-600 text-white shadow-soft scale-105'
-                            : `${item.bg} ${item.color}`
-                        }`}
-                      >
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      {!isSidebarCollapsed && (
-                        <span className="truncate">{item.label}</span>
-                      )}
+                        ? mode === 'sports'
+                          ? 'bg-purple-600 text-white shadow-soft scale-105'
+                          : 'bg-rose-600 text-white shadow-soft scale-105'
+                        : `${item.bg} ${item.color}`
+                    }`}>
+                      <Icon className="w-4 h-4" />
                     </div>
+                    {!isSidebarCollapsed && <span className="truncate">{item.label}</span>}
+                  </div>
 
-                    {/* Badge */}
-                    {item.badge &&
-                      (!isSidebarCollapsed ? (
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold flex-shrink-0 ${
-                            item.badgeColor ||
-                            'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                          }`}
-                        >
-                          {item.badge}
-                        </span>
-                      ) : (
-                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-900" />
-                      ))}
-                  </button>
-                );
-              })}
-            </div>
+                  {/* Badge */}
+                  {item.badge && (
+                    !isSidebarCollapsed ? (
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold flex-shrink-0 ${
+                        item.badgeColor || 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                      }`}>
+                        {item.badge}
+                      </span>
+                    ) : (
+                      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-900" />
+                    )
+                  )}
+                </button>
+              );
+            })}
           </div>
+
         </div>
-
-        {/* Draggable Resize Handle along inner edge (Desktop only) */}
-        {!isSidebarCollapsed && (
-          <div
-            onPointerDown={handleResizeStart}
-            className="hidden lg:flex absolute top-0 right-0 bottom-0 w-3 -mr-1.5 z-40 cursor-col-resize items-center justify-center select-none touch-none group hover:bg-purple-500/10 active:bg-purple-500/20 transition-colors"
-            title="Drag to resize sidebar width"
-            aria-label="Resize sidebar width"
-          >
-            <div className="w-1 h-12 mx-auto rounded-full bg-slate-300 dark:bg-slate-700 group-hover:bg-purple-500 group-hover:h-20 group-hover:w-1.5 active:bg-purple-600 transition-all shadow-sm" />
-          </div>
-        )}
       </aside>
     </>
   );
