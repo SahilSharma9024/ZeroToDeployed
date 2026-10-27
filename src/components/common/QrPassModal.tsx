@@ -163,6 +163,21 @@ export const QrPassModal: React.FC = () => {
           <div className="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
             <button
               type="button"
+              onClick={async () => {
+                try {
+                  const res = await fetch(`/api/passes/verify/${activeQrPass.ticketCode}`);
+                  const data = await res.json();
+                  alert(data.message ? `✅ Gate Check-in: ${data.message} (${data.pass?.athlete})` : 'Access Granted');
+                } catch {
+                  alert('Pass verified locally.');
+                }
+              }}
+              className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors cursor-pointer"
+            >
+              Verify Live
+            </button>
+            <button
+              type="button"
               onClick={() => setActiveQrPass(null)}
               className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer"
             >

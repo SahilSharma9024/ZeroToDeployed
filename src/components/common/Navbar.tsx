@@ -12,6 +12,7 @@ import {
   Sliders,
   Award,
   ArrowRight,
+  LogOut,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -27,6 +28,7 @@ export const Navbar: React.FC = () => {
     theme,
     toggleTheme,
     setIsMobileSidebarOpen,
+    logout,
   } = useApp();
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -318,6 +320,29 @@ export const Navbar: React.FC = () => {
                       <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/60 px-2 py-0.5 rounded-lg border border-purple-200 dark:border-purple-800">
                         Toggle
                       </span>
+                    </button>
+
+                    {/* Sign Out / Switch Account */}
+                    <button
+                      onClick={() => {
+                        setIsProfileMenuOpen(false);
+                        logout();
+                      }}
+                      className="w-full flex items-center justify-between p-2.5 rounded-2xl hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 transition-colors group text-left cursor-pointer border-t border-slate-100 dark:border-slate-800"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-2 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60">
+                          <LogOut className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-rose-600 dark:text-rose-400">
+                            Sign Out / Switch Account
+                          </p>
+                          <p className="text-[10px] text-slate-400">
+                            Return to Athlete Portal & Sign In Screen
+                          </p>
+                        </div>
+                      </div>
                     </button>
                   </div>
                 </div>

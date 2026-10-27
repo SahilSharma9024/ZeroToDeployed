@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Calculator, Flame, Droplet, Activity, RefreshCw, Sparkles, Scale } from 'lucide-react';
+import { Calculator, Flame, Droplet, Activity, RefreshCw, Sparkles, Scale, CheckCircle2, Database } from 'lucide-react';
 
 export const HealthCalculators: React.FC = () => {
   const { user } = useApp();
@@ -10,6 +10,7 @@ export const HealthCalculators: React.FC = () => {
   const [age, setAge] = useState<number>(user.age);
   const [gender, setGender] = useState<'Male' | 'Female'>('Male');
   const [activityLevel, setActivityLevel] = useState<number>(1.55);
+  const [logSaved, setLogSaved] = useState<boolean>(false);
 
   // Sync from profile
   const handleSyncProfile = () => {
@@ -17,6 +18,28 @@ export const HealthCalculators: React.FC = () => {
     setWeightKg(user.weightKg);
     setAge(user.age);
     setGender(user.gender === 'Female' ? 'Female' : 'Male');
+  };
+
+  const handleSaveToDatabase = async () => {
+    try {
+      await fetch('/api/health/daily-log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id || 'usr-aarav-demo',
+          weightKg,
+          waterLiters: Number(dailyWaterLiters),
+          caloriesConsumed: tdee,
+          caloriesBurned: bmr,
+          workoutCompleted: 1,
+          notes: `BMI: ${bmi} (${bmiCat.label}), BMR: ${bmr} kcal`,
+        }),
+      });
+      setLogSaved(true);
+      setTimeout(() => setLogSaved(false), 3000);
+    } catch (err) {
+      console.warn('Failed to commit log to SQLite:', err);
+    }
   };
 
   // 1. BMI Calculation
@@ -280,6 +303,40 @@ export const HealthCalculators: React.FC = () => {
           </div>
         </div>
 
+      </div>
+
+      {/* Commit to SQLite Database Action Banner */}
+      <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-soft flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center shrink-0">
+            <Database className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+              Commit Health Metrics to SQLite Database
+            </h4>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+              Permanently stores your daily BMI ({bmi}), BMR ({bmr} kcal), and hydration target into kinetix.db.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={handleSaveToDatabase}
+          className="flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-soft transition-all shrink-0 active:scale-95"
+        >
+          {logSaved ? (
+            <>
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>Saved to kinetix.db!</span>
+            </>
+          ) : (
+            <>
+              <Database className="w-4 h-4" />
+              <span>Commit Daily Health Log</span>
+            </>
+          )}
+        </button>
       </div>
 
     </div>
