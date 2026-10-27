@@ -54,30 +54,6 @@ export const Sidebar: React.FC = () => {
     setIsMobileSidebarOpen(false);
   };
 
-  // Draggable resize handler
-  const handleResizeStart = (e: React.PointerEvent) => {
-    e.preventDefault();
-    setIsResizing(true);
-    document.body.style.cursor = 'col-resize';
-    document.body.style.userSelect = 'none';
-
-    const handlePointerMove = (moveEvent: PointerEvent) => {
-      const newWidth = Math.min(Math.max(moveEvent.clientX, 240), 460);
-      setSidebarWidth(newWidth);
-    };
-
-    const handlePointerUp = () => {
-      setIsResizing(false);
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerup', handlePointerUp);
-    };
-
-    window.addEventListener('pointermove', handlePointerMove);
-    window.addEventListener('pointerup', handlePointerUp);
-  };
-
   // Social Community Navigation Items (Active when Social is selected in Navbar)
   const socialNav = [
     {
