@@ -7,6 +7,7 @@ import { AutoRegisterModal } from './components/common/AutoRegisterModal';
 import { QrPassModal } from './components/common/QrPassModal';
 import { ProfileModal } from './components/common/ProfileModal';
 import { VenueMap } from './components/common/VenueMap';
+import { AuthScreen } from './components/common/AuthScreen';
 
 // Feature Pages
 import { HomePage } from './features/home/HomePage';
@@ -24,7 +25,11 @@ import { PassesPage } from './features/passes/PassesPage';
 import { VirtualGymPage } from './features/virtualGym/VirtualGymPage';
 
 const MainLayout: React.FC = () => {
-  const { activePage, user } = useApp();
+  const { activePage, user, authToken } = useApp();
+
+  if (!authToken) {
+    return <AuthScreen />;
+  }
 
   const renderActiveView = () => {
     switch (activePage) {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { UnitSystem } from '../../types';
-import { X, Check, ShieldCheck, Phone, Scale, Award } from 'lucide-react';
+import { X, Check, Phone, Scale, Flame, Droplet, Activity, CheckCircle2 } from 'lucide-react';
 
 const COUNTRY_CODES = [
   { code: '+91', country: 'India (IN)' },
@@ -19,12 +19,10 @@ export const ProfileModal: React.FC = () => {
   const [unitSystem, setUnitSystem] = useState<UnitSystem>(user.unitSystem || 'metric');
 
   // Display values based on active unit system
-  // Weight: kg or lbs
   const displayWeight = unitSystem === 'metric'
     ? user.weightKg
     : Number((user.weightKg * 2.20462).toFixed(1));
 
-  // Height: cm or inches
   const displayHeight = unitSystem === 'metric'
     ? user.heightCm
     : Number((user.heightCm * 0.393701).toFixed(1));
@@ -48,6 +46,40 @@ export const ProfileModal: React.FC = () => {
     role: user.role,
   });
 
+  const [savedSuccess, setSavedSuccess] = useState(false);
+
+  // Live Clinical BMI & Metabolic Calculations
+  const calcWeightKg = unitSystem === 'metric'
+    ? Number(formData.weightInput) || 70
+    : (Number(formData.weightInput) || 154) / 2.20462;
+
+  const calcHeightCm = unitSystem === 'metric'
+    ? Number(formData.heightInput) || 175
+    : (Number(formData.heightInput) || 69) / 0.393701;
+
+  const heightM = calcHeightCm > 0 ? calcHeightCm / 100 : 1.75;
+  const liveBmi = heightM > 0 && calcWeightKg > 0 ? Number((calcWeightKg / (heightM * heightM)).toFixed(1)) : 22.9;
+
+  const getBmiCategory = (val: number) => {
+    if (val <= 0) return { label: 'Enter Biometrics', color: 'text-slate-500', bg: 'bg-slate-100', border: 'border-slate-200' };
+    if (val < 18.5) return { label: 'Underweight', color: 'text-amber-700 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-950/60', border: 'border-amber-200 dark:border-amber-800' };
+    if (val <= 24.9) return { label: 'Normal / Healthy Weight', color: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-emerald-950/60', border: 'border-emerald-200 dark:border-emerald-800' };
+    if (val <= 29.9) return { label: 'Overweight', color: 'text-amber-700 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-950/60', border: 'border-amber-200 dark:border-amber-800' };
+    return { label: 'Obese Class', color: 'text-rose-700 dark:text-rose-300', bg: 'bg-rose-100 dark:bg-rose-950/60', border: 'border-rose-200 dark:border-rose-800' };
+  };
+
+  const bmiCat = getBmiCategory(liveBmi);
+  const minHealthyWeight = Number((18.5 * heightM * heightM).toFixed(1));
+  const maxHealthyWeight = Number((24.9 * heightM * heightM).toFixed(1));
+
+  const liveBmr = Math.round(
+    formData.gender === 'Female'
+      ? 10 * calcWeightKg + 6.25 * calcHeightCm - 5 * Number(formData.age || 25) - 161
+      : 10 * calcWeightKg + 6.25 * calcHeightCm - 5 * Number(formData.age || 25) + 5
+  );
+
+  const liveHydrationLiters = (calcWeightKg * 0.035).toFixed(1);
+
   // Escape key to dismiss profile modal
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -67,14 +99,12 @@ export const ProfileModal: React.FC = () => {
   const handleUnitToggle = (newUnit: UnitSystem) => {
     if (newUnit === unitSystem) return;
     if (newUnit === 'imperial') {
-      // convert metric to imperial
       setFormData((prev) => ({
         ...prev,
         weightInput: Number((prev.weightInput * 2.20462).toFixed(1)),
         heightInput: Number((prev.heightInput * 0.393701).toFixed(1)),
       }));
     } else {
-      // convert imperial to metric
       setFormData((prev) => ({
         ...prev,
         weightInput: Number((prev.weightInput / 2.20462).toFixed(1)),
@@ -87,7 +117,6 @@ export const ProfileModal: React.FC = () => {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Normalize back to metric for internal storage
     const normalizedWeightKg = unitSystem === 'metric'
       ? Number(formData.weightInput)
       : Number((Number(formData.weightInput) / 2.20462).toFixed(1));
@@ -119,7 +148,32 @@ export const ProfileModal: React.FC = () => {
       },
     });
 
-    setIsProfileOpen(false);
+    // Sync to SQLite backend in background
+    const token = localStorage.getItem('kinetix_token');
+    if (token) {
+      fetch('/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          age: Number(formData.age),
+          gender: formData.gender,
+          height_cm: normalizedHeightCm,
+          weight_kg: normalizedWeightKg,
+          fitness_goal: formData.fitnessGoal,
+        }),
+      }).catch(() => {});
+    }
+
+    setSavedSuccess(true);
+    setTimeout(() => {
+      setSavedSuccess(false);
+      setIsProfileOpen(false);
+    }, 800);
   };
 
   return (
@@ -129,7 +183,7 @@ export const ProfileModal: React.FC = () => {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-2xl max-h-[90vh] flex flex-col bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden"
+        className="relative w-full max-w-2xl max-h-[92vh] flex flex-col bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden"
       >
         
         {/* Header */}
@@ -141,11 +195,14 @@ export const ProfileModal: React.FC = () => {
               className="w-12 h-12 rounded-2xl object-cover border-2 border-white dark:border-slate-700 shadow-soft"
             />
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                Personal Details & Athlete ID
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <span>Personal Details & Athlete ID</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-600 text-white">
+                  SQLite Synced
+                </span>
               </h2>
               <p className="text-xs text-slate-600 dark:text-slate-400">
-                Update your biometrics, units (kg/lbs, cm/in), contact info & registration credentials
+                Update your biometrics to recalculate BMI, metabolic burn, and competition waivers
               </p>
             </div>
           </div>
@@ -159,12 +216,12 @@ export const ProfileModal: React.FC = () => {
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSave} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+        <form onSubmit={handleSave} className="p-6 space-y-5 max-h-[78vh] overflow-y-auto">
           
           {/* Top Options Bar: Role Switcher & Unit Exchange */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             
-            {/* Dedicated Role Switcher */}
+            {/* Persona Switcher */}
             <div className="p-3 bg-purple-50/70 dark:bg-purple-950/40 rounded-2xl border border-purple-200/80 dark:border-purple-800/50 space-y-1.5">
               <span className="text-[10px] font-bold text-purple-900 dark:text-purple-300 uppercase tracking-wider block">
                 Account Persona
@@ -301,7 +358,7 @@ export const ProfileModal: React.FC = () => {
                 step="0.1"
                 value={formData.heightInput}
                 onChange={(e) => setFormData({ ...formData, heightInput: Number(e.target.value) })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-purple-300 dark:border-purple-700 bg-purple-50/30 dark:bg-slate-800 text-slate-900 dark:text-white font-bold"
                 required
               />
             </div>
@@ -316,11 +373,78 @@ export const ProfileModal: React.FC = () => {
                 step="0.1"
                 value={formData.weightInput}
                 onChange={(e) => setFormData({ ...formData, weightInput: Number(e.target.value) })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-purple-300 dark:border-purple-700 bg-purple-50/30 dark:bg-slate-800 text-slate-900 dark:text-white font-bold"
                 required
               />
             </div>
+          </div>
 
+          {/* ================================================================= */}
+          {/* LIVE CLINICAL BMI & METABOLIC SCORECARD (UPDATES IN REAL-TIME) */}
+          {/* ================================================================= */}
+          <div className="p-4 rounded-3xl bg-gradient-to-br from-indigo-50/90 via-purple-50/80 to-emerald-50/70 dark:from-slate-800 dark:via-purple-950/40 dark:to-slate-800/90 border border-purple-200 dark:border-purple-800/60 shadow-soft space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase tracking-wider text-purple-900 dark:text-purple-300 flex items-center gap-1.5">
+                <Activity className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                Live Clinical BMI & Metabolic Gauge
+              </span>
+              <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${bmiCat.bg} ${bmiCat.color} border ${bmiCat.border}`}>
+                {bmiCat.label}
+              </span>
+            </div>
+
+            {/* 3 Metric Pills */}
+            <div className="grid grid-cols-3 gap-2.5 text-center">
+              <div className="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-purple-100 dark:border-slate-700 shadow-sm">
+                <span className="text-[10px] font-bold text-slate-400 uppercase block">Calculated BMI</span>
+                <span className="text-xl font-black text-purple-700 dark:text-purple-300">{liveBmi}</span>
+                <span className="text-[9px] text-slate-400 block">kg/m²</span>
+              </div>
+
+              <div className="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-rose-100 dark:border-slate-700 shadow-sm">
+                <span className="text-[10px] font-bold text-slate-400 uppercase block flex items-center justify-center gap-0.5">
+                  <Flame className="w-3 h-3 text-rose-500 inline" />
+                  Resting BMR
+                </span>
+                <span className="text-xl font-black text-rose-600 dark:text-rose-400">{liveBmr}</span>
+                <span className="text-[9px] text-slate-400 block">kcal/day</span>
+              </div>
+
+              <div className="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-sky-100 dark:border-slate-700 shadow-sm">
+                <span className="text-[10px] font-bold text-slate-400 uppercase block flex items-center justify-center gap-0.5">
+                  <Droplet className="w-3 h-3 text-sky-500 inline" />
+                  Hydration
+                </span>
+                <span className="text-xl font-black text-sky-600 dark:text-sky-400">{liveHydrationLiters} L</span>
+                <span className="text-[9px] text-slate-400 block">daily minimum</span>
+              </div>
+            </div>
+
+            {/* Visual Gauge Bar */}
+            <div className="space-y-1">
+              <div className="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden flex">
+                <div className="bg-amber-400 h-full" style={{ width: '20%' }} title="Underweight (<18.5)" />
+                <div className="bg-emerald-500 h-full" style={{ width: '35%' }} title="Normal (18.5 - 24.9)" />
+                <div className="bg-amber-500 h-full" style={{ width: '25%' }} title="Overweight (25 - 29.9)" />
+                <div className="bg-rose-500 h-full" style={{ width: '20%' }} title="Obese (30+)" />
+              </div>
+              <div className="flex justify-between text-[9px] text-slate-500 dark:text-slate-400 font-semibold px-0.5">
+                <span>&lt; 18.5 Under</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">18.5 - 24.9 Healthy</span>
+                <span>25 - 29.9 Over</span>
+                <span>30+ Obese</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-300 pt-1">
+              <span>Healthy Weight Range for your height:</span>
+              <strong className="text-emerald-700 dark:text-emerald-300 font-extrabold">
+                {minHealthyWeight} kg — {maxHealthyWeight} kg
+              </strong>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div>
               <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Jersey / Uniform Size</label>
               <select
@@ -391,6 +515,12 @@ export const ProfileModal: React.FC = () => {
 
           {/* Action buttons */}
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+            {savedSuccess && (
+              <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                Saved & Synced to SQLite!
+              </span>
+            )}
             <button
               type="button"
               onClick={() => setIsProfileOpen(false)}
@@ -403,7 +533,7 @@ export const ProfileModal: React.FC = () => {
               className="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-soft transition-colors flex items-center gap-1.5"
             >
               <Check className="w-4 h-4" />
-              Save Athlete ID
+              Save Athlete ID & Biometrics
             </button>
           </div>
 

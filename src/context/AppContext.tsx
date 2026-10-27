@@ -57,11 +57,17 @@ interface AppContextType {
   
   // Fitness State
   gyms: GymVenue[];
+  setGyms: React.Dispatch<React.SetStateAction<GymVenue[]>>;
   clients: ClientProfile[];
   gymBuddies: GymBuddyBeacon[];
   updateClientNotes: (clientId: string, notes: string) => void;
   assignPlanToClient: (clientId: string, dietPlanId: string, workoutPlanId: string) => void;
   addGymBuddy: (buddy: Omit<GymBuddyBeacon, 'id'>) => void;
+
+  // Real-Time Venues & City Selector
+  fetchVenues: (type?: 'all' | 'gym' | 'turf', lat?: number, lng?: number) => Promise<void>;
+  activeCity: string;
+  setActiveCity: (city: string) => void;
   
   // Modals & Triggers
   autoRegisterTarget: AutoRegisterTarget | null;
@@ -74,6 +80,13 @@ interface AppContextType {
   
   isProfileOpen: boolean;
   setIsProfileOpen: (open: boolean) => void;
+
+  // Authentication State
+  authToken: string | null;
+  setAuthToken: (token: string | null) => void;
+  isAuthOpen: boolean;
+  setIsAuthOpen: (open: boolean) => void;
+  logout: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -81,6 +94,12 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Mode toggle: Sports or Fitness
   const [mode, setModeState] = useState<AppMode>('sports');
+
+  // Authentication State
+  const [authToken, setAuthToken] = useState<string | null>(() => {
+    return localStorage.getItem('kinetix_token');
+  });
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   // Active page navigation
   const [activePage, setActivePage] = useState<ActivePage>('home');
@@ -114,29 +133,172 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return saved ? JSON.parse(saved) : INITIAL_USER;
   });
 
+  // Sync auth profile on mount
+  useEffect(() => {
+    const token = localStorage.getItem('kinetix_token');
+    if (token) {
+      fetch('/api/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.user) {
+            setUser((prev) => ({
+              ...prev,
+              id: data.user.id,
+              name: data.user.name,
+              email: data.user.email,
+              phone: data.user.phone || prev.phone,
+              role: data.user.role || prev.role,
+              age: data.user.age || prev.age,
+              gender: data.user.gender || prev.gender,
+              heightCm: data.user.height_cm || prev.heightCm,
+              weightKg: data.user.weight_kg || prev.weightKg,
+              fitnessGoal: data.user.fitness_goal || prev.fitnessGoal,
+              bloodGroup: data.user.blood_group || prev.bloodGroup
+            }));
+          }
+        })
+        .catch(() => {});
+    }
+  }, [authToken]);
+
+  const logout = () => {
+    localStorage.removeItem('kinetix_token');
+    localStorage.removeItem('kinetix_auth_user');
+    setAuthToken(null);
+    setUser(INITIAL_USER);
+  };
+
   // Passes
   const [passes, setPasses] = useState<RegistrationPass[]>(() => {
     const saved = localStorage.getItem('KinetiQ_passes');
     return saved ? JSON.parse(saved) : INITIAL_PASSES;
   });
 
+  // Load real passes from SQLite backend
+  useEffect(() => {
+    if (user?.id) {
+      fetch(`/api/passes/my-passes/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.passes && data.passes.length > 0) {
+            const mapped: RegistrationPass[] = data.passes.map((p: any) => ({
+              id: p.id,
+              type: p.category === 'fitness' ? 'gym_pass' : 'turf',
+              title: p.title,
+              category: p.category,
+              date: p.event_date,
+              time: 'Standard Slot',
+              venue: p.venue_name,
+              registeredAt: p.created_at ? p.created_at.split('T')[0] : '2026-10-27',
+              ticketCode: p.ticket_code,
+              athleteName: user.name,
+              status: p.status,
+              cost: p.cost,
+            }));
+            setPasses(mapped);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [user.id, authToken]);
+
   // Geolocation
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>({
-    lat: 12.9345, // default Koramangala, Bengaluru
-    lng: 77.6265,
+    lat: 17.3850, // default Hyderabad
+    lng: 78.4867,
   });
   const [isLocating, setIsLocating] = useState(false);
 
   // Sports items
   const [events] = useState<SportsEvent[]>(INITIAL_EVENTS);
-  const [turfs] = useState<TurfVenue[]>(INITIAL_TURFS);
+  const [turfs, setTurfs] = useState<TurfVenue[]>(INITIAL_TURFS);
   const [ghostSubs, setGhostSubs] = useState<GhostSubBeacon[]>(INITIAL_GHOST_SUBS);
   const [matchRequests, setMatchRequests] = useState<MatchScheduleRequest[]>(INITIAL_MATCH_REQUESTS);
 
   // Fitness items
-  const [gyms] = useState<GymVenue[]>(INITIAL_GYMS);
+  const [gyms, setGyms] = useState<GymVenue[]>(INITIAL_GYMS);
   const [clients, setClients] = useState<ClientProfile[]>(INITIAL_CLIENTS);
   const [gymBuddies, setGymBuddies] = useState<GymBuddyBeacon[]>(INITIAL_GYM_BUDDIES);
+  const [activeCity, setActiveCity] = useState<string>('Hyderabad');
+
+  // Live Venues Fetcher from OpenStreetMap & SQLite
+  const fetchVenues = async (type: 'all' | 'gym' | 'turf' = 'all', lat?: number, lng?: number) => {
+    const queryLat = lat ?? userLocation?.lat ?? 17.3850;
+    const queryLng = lng ?? userLocation?.lng ?? 78.4867;
+    try {
+      const res = await fetch(`/api/venues?type=${type}&lat=${queryLat}&lng=${queryLng}&radius=12000`);
+      const data = await res.json();
+      if (data.venues && Array.isArray(data.venues) && data.venues.length > 0) {
+        if (type === 'all' || type === 'gym') {
+          const gymList = data.venues.filter((v: any) => v.type === 'gym');
+          if (gymList.length > 0) {
+            const mappedGyms: GymVenue[] = gymList.map((v: any, idx: number) => ({
+              id: v.id || `gym-${idx}`,
+              name: v.name,
+              rating: v.rating || 4.7,
+              reviewCount: 35 + ((idx * 11) % 65),
+              category: (['Premium Gym', 'CrossFit Box', 'Strength & Conditioning', 'Yoga & Pilates Studio'] as const)[idx % 4],
+              distanceKm: v.distanceKm || 1.2,
+              lat: v.latitude,
+              lng: v.longitude,
+              location: v.address || 'Central Fitness Zone',
+              priceMonthly: 1999 + ((idx * 350) % 1500),
+              freeTrialAvailable: true,
+              imageUrl: [
+                'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80',
+              ][idx % 4],
+              amenities: v.amenities?.length ? v.amenities : ['Cardio Zone', 'Strength Equipment', 'Air Conditioned', 'Lockers'],
+              equipmentHighlights: ['Olympic Barbells', 'Dumbbells up to 50kg', 'Power Racks', 'Cable Cross'],
+              trainerCount: 4 + (idx % 3),
+              operatingHours: '06:00 AM - 10:30 PM',
+            }));
+            setGyms(mappedGyms);
+          }
+        }
+
+        if (type === 'all' || type === 'turf') {
+          const turfList = data.venues.filter((v: any) => v.type === 'turf');
+          if (turfList.length > 0) {
+            const mappedTurfs: TurfVenue[] = turfList.map((v: any, idx: number) => ({
+              id: v.id || `turf-${idx}`,
+              name: v.name,
+              sportsSupported: [v.sport || 'Football', 'Cricket'],
+              venueType: v.isIndoor ? 'Indoor' : 'Outdoor',
+              surfaceType: 'FIFA Grade Synthetic 50mm',
+              rating: v.rating || 4.8,
+              reviewCount: 42 + ((idx * 7) % 50),
+              distanceKm: v.distanceKm || 1.5,
+              lat: v.latitude,
+              lng: v.longitude,
+              location: v.address || 'Sports Park',
+              pricePerHour: 900 + ((idx * 200) % 800),
+              imageUrl: [
+                'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=800&q=80',
+              ][idx % 3],
+              amenities: v.amenities?.length ? v.amenities : ['LED Floodlights', 'Bibs & Balls', 'Dugouts', 'Changing Rooms'],
+              availableSlotsToday: ['06:00 PM', '07:00 PM', '08:00 PM', '09:00 PM'],
+              isInstantBooking: true,
+            }));
+            setTurfs(mappedTurfs);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Could not fetch live venues from /api/venues:', err);
+    }
+  };
+
+  // Auto-fetch venues on mount
+  useEffect(() => {
+    fetchVenues('all');
+  }, []);
 
   // Modals
   const [autoRegisterTarget, setAutoRegisterTarget] = useState<AutoRegisterTarget | null>(null);
@@ -160,8 +322,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const setMode = (newMode: AppMode) => {
     setModeState(newMode);
-    // When switching mode, change active page to that mode's overview
-    setActivePage(newMode === 'sports' ? 'sports-events' : 'virtual-gym');
+    setActivePage(newMode === 'sports' ? 'sports-overview' : 'fitness-overview');
   };
 
   useEffect(() => {
@@ -203,7 +364,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Real Geolocation
   const requestUserLocation = () => {
     if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser. Using Bangalore coordinates.');
+      alert('Geolocation is not supported by your browser. Using city coordinates.');
       return;
     }
     setIsLocating(true);
@@ -299,6 +460,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const confirmAutoRegister = (): RegistrationPass => {
     if (!autoRegisterTarget) throw new Error('No target selected');
 
+    const randomHex = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const cityCode = autoRegisterTarget.venue.toLowerCase().includes('hyderabad') ? 'HYD' : 'BLR';
+    const ticketCode = `KTX-2026-${cityCode}-${randomHex}`;
+
     const newPass: RegistrationPass = {
       id: `pass_${Date.now()}`,
       type: autoRegisterTarget.type,
@@ -308,13 +473,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       time: 'Standard Slot',
       venue: autoRegisterTarget.venue,
       registeredAt: new Date().toISOString().split('T')[0],
-      ticketCode: `KNX-${Math.random().toString(36).substring(2, 7).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      ticketCode,
       athleteName: user.name,
       status: 'Confirmed',
       cost: autoRegisterTarget.cost,
     };
 
     setPasses((prev) => [newPass, ...prev]);
+
+    // Commit pass to SQLite backend
+    fetch('/api/passes/issue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: user.id || 'usr-aarav-demo',
+        venueName: autoRegisterTarget.venue,
+        category: autoRegisterTarget.type === 'gym_pass' ? 'fitness' : 'sports',
+        title: autoRegisterTarget.title,
+        cost: autoRegisterTarget.cost
+      })
+    }).catch(() => {});
+
     setAutoRegisterTarget(null);
 
     try {
@@ -358,11 +537,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         acceptGhostSub,
         addMatchRequest,
         gyms,
+        setGyms,
         clients,
         gymBuddies,
         updateClientNotes,
         assignPlanToClient,
         addGymBuddy,
+        fetchVenues,
+        activeCity,
+        setActiveCity,
         autoRegisterTarget,
         openAutoRegister,
         closeAutoRegister,
@@ -371,6 +554,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setActiveQrPass,
         isProfileOpen,
         setIsProfileOpen,
+        authToken,
+        setAuthToken,
+        isAuthOpen,
+        setIsAuthOpen,
+        logout,
       }}
     >
       {children}
