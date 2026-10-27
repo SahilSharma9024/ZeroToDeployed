@@ -23,6 +23,14 @@ dist-ssr
 *.sln
 *.sw?
 .env
-KinetiQ.db
-KinetiQ.db-shm
-KinetiQ.db-wal
+
+# SQLite Databases
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sqlite-shm
+*.sqlite-wal
+KinetiQ.db*
+kinetix.db*

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { db } from '../db.js';
 
 export interface AthleteMemory {
@@ -10,22 +11,24 @@ export interface AthleteMemory {
   createdAt?: string;
 }
 
-const HINDSIGHT_API_KEY = process.env.HINDSIGHT_API_KEY || '';
-const HINDSIGHT_ENDPOINT = process.env.HINDSIGHT_ENDPOINT || 'https://api.hindsight.vectorize.io';
-
 /**
  * Recall active physiological memories from Vectorize Hindsight memory bank
  * (with automatic SQLite fallback).
  */
 export async function recallMemories(userId: string, contextQuery?: string): Promise<AthleteMemory[]> {
+  const rawKey = process.env.HINDSIGHT_API_KEY || '';
+  const apiKey = rawKey.replace(/^["']|["']$/g, '').trim();
+  const rawEndpoint = process.env.HINDSIGHT_ENDPOINT || 'https://api.hindsight.vectorize.io';
+  const endpoint = rawEndpoint.replace(/^["']|["']$/g, '').trim();
+
   // 1. If Hindsight API key is configured, call Vectorize Hindsight cloud service
-  if (HINDSIGHT_API_KEY) {
+  if (apiKey) {
     try {
-      const response = await fetch(`${HINDSIGHT_ENDPOINT}/v1/memories/recall`, {
+      const response = await fetch(`${endpoint}/v1/memories/recall`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${HINDSIGHT_API_KEY}`
+          'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
           user_id: userId,
@@ -46,9 +49,12 @@ export async function recallMemories(userId: string, contextQuery?: string): Pro
             source: 'hindsight_cloud'
           }));
         }
+      } else {
+        const errText = await response.text();
+        console.warn(`[Hindsight Cloud] Recall error HTTP ${response.status}:`, errText);
       }
     } catch (cloudErr) {
-      console.warn('Vectorize Hindsight cloud recall error, falling back to local SQLite:', (cloudErr as any).message);
+      console.warn('[Hindsight Cloud] Recall network error, falling back to local SQLite:', (cloudErr as any).message);
     }
   }
 
@@ -85,13 +91,18 @@ export async function retainMemory(
 
   insertStmt.run(memoryId, userId, category, content, confidence, source);
 
+  const rawKey = process.env.HINDSIGHT_API_KEY || '';
+  const apiKey = rawKey.replace(/^["']|["']$/g, '').trim();
+  const rawEndpoint = process.env.HINDSIGHT_ENDPOINT || 'https://api.hindsight.vectorize.io';
+  const endpoint = rawEndpoint.replace(/^["']|["']$/g, '').trim();
+
   // 2. If Vectorize Hindsight API key is present, push to cloud asynchronously
-  if (HINDSIGHT_API_KEY) {
-    fetch(`${HINDSIGHT_ENDPOINT}/v1/memories/retain`, {
+  if (apiKey) {
+    fetch(`${endpoint}/v1/memories/retain`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${HINDSIGHT_API_KEY}`
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
         id: memoryId,
@@ -102,7 +113,7 @@ export async function retainMemory(
         metadata: { source }
       })
     }).catch((err) => {
-      console.warn('Asynchronous Hindsight cloud sync failed:', err.message);
+      console.warn('[Hindsight Cloud] Asynchronous retain failed:', err.message);
     });
   }
 
@@ -116,4 +127,3 @@ export async function retainMemory(
     createdAt: new Date().toISOString()
   };
 }
-
